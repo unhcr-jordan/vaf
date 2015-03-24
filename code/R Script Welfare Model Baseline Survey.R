@@ -6,7 +6,7 @@
 # Proportional regional allocation
 
 # Import data:
-vafbaseline <- read.csv("C:/Users/SANTACRO/Desktop/Baseline Surveys/vafbaseline.csv")
+vafbaseline <- read.csv("data/vafbaseline.csv")
 
 # Replace Null with 0 in data.frame:
 vafbaseline[is.na(vafbaseline)] <- 0

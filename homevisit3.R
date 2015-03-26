@@ -140,3 +140,10 @@ asset.plot <- ggplot(data=homevisit3.assets, aes(x=reorder(variable, value) , y=
 
 # Save this!
 ggsave("out/assetplot.png", asset.plot, width=8, height=6,units="in", dpi=300)
+
+assetplotfamily <- ggplot(data=homevisit3.assets, aes(x=Household.information.Family.Size , y=value, fill=variable))+
+  geom_bar(stat="identity")+
+  labs(x = "", y = "")
+
+# Save this!
+ggsave("out/assetplotfamily.png", assetplotfamily, width=8, height=2,units="in", dpi=300, bg = "transparent")

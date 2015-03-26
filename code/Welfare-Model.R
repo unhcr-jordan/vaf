@@ -16,7 +16,7 @@
 ##########################################################################
 
 #Import Dataset and Change Name:
-hve<- read.csv("data/HomeVisit3.csv")
+hve <- read.csv("data/Home_visit_version3.csv", skip=1)
 
 ## Volker
 

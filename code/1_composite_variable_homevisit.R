@@ -277,8 +277,6 @@ hve3$Dummy.Uni.PA[hve3$Dummy.Uni.PA=="Post university level"] <- 1
 hve3$Dummy.Uni.PA <- as.numeric(hve3$Dummy.Uni.PA)
 #Must replace NA cells with 0:
 hve3$Dummy.Uni.PA[is.na(hve3$Dummy.Uni.PA)] <- 0
-
-
 #Education PA (Quasi-continuous)
 hve3$EducationLevelCode.PA. <- as.character(hve3$EducationLevelCode.PA.)
 hve3$EducationLevelCode.PA.[hve3$EducationLevelCode.PA.=="Technical or vocational"] <- 10

@@ -40,8 +40,7 @@ dropvariable.homevisit <- labeldata[labeldata$identify=="yes",]
 droplabel.homevisit <- dropvariable.homevisit[, 3]
 
 
-# 
-str(droplabel.homevisit)
+# str(droplabel.homevisit)
 rm(labeldata)  
 
 hve4 <-hve3[,!(names(hve3) %in% droplabel.homevisit)]

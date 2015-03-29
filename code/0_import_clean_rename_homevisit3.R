@@ -14,6 +14,7 @@ homevisit <- read.csv("data/Home_visit_version3.csv", skip=1)
 #### Rename variables 
 ## Label are not easily legible
 ## Labels have been manually reviewed -- elimination special characters such / or ? or - 
+## Labels are also  trimmed when necessary so that they are less than 256 char long - 
 ## This will allow the rest of the script to run smoothly
 label <- read.csv("data/homevisit_label.csv", na.strings="", stringsAsFactors=FALSE)
 
@@ -24,9 +25,6 @@ homevisit3 <- homevisit
 # 
 str(homevisit3)
 rm(label)
-
-
-
 
 
 ################################################################

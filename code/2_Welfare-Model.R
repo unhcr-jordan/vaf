@@ -24,6 +24,35 @@ library(lmtest)
 ## then some liner  regression in order to find the weight to be used for the prediction
 
 
+######### First step subset the dataframe in order to keep the column that make snese for the regression.
+
+
+str(hve3)
+
+#Eliminate Columns with Arabic Text or potential ID:
+### Those variable are already identified in the label info in CSV - column 5 --
+
+labeldata <- read.csv("data/homevisit_label.csv", stringsAsFactors=FALSE)
+names(labeldata)
+dropvariable.homevisit <- labeldata[labeldata$identify=="yes",] 
+
+## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
+droplabel.homevisit <- dropvariable.homevisit[, 3]
+
+
+# 
+str(droplabel.homevisit)
+rm(labeldata)  
+
+hve4 <-hve3[,!(names(hve3) %in% droplabel.homevisit)]
+
+
+
+str(hve4)
+names(hve4)
+
+
+
 ##########################################################################
 #AUTOMATED REGRESSIONS:
 ##########################################################################
@@ -36,7 +65,7 @@ i <- 1
 while (i<702) 
 {
   
-  reg <- lm(Expenditure.Per.Capita~hve3[,i], data=hve3);
+  reg <- lm(Expenditure.Per.Capita ~ hve4[,i], data=hve4);
   rsquared <- summary(reg)$r.squared;
   col1 <- as.character (i);
   col2 <- as.character (colnames(hve3)[i]);

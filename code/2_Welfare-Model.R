@@ -1,6 +1,6 @@
 ##########################################################################
 #### Import data & Rename variable
-source("code/composite_variable_homevisit.R.R")
+source("code/composite_variable_homevisit.R")
 
 
 

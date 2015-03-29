@@ -2,9 +2,6 @@
 #### Import data, Rename variables & Clean rows
 
 
-
-
-
 ################################################################
 #### Import data
 ## Extracted from https://www.unhcrmenadagdata.org/RaisJordan
@@ -13,12 +10,11 @@ homevisit <- read.csv("data/Home_visit_version3.csv", skip=1)
 
 
 
-
-
 ################################################################
 #### Rename variables 
 ## Label are not easily legible
-## Labels have been manually reviewed -- elimination special characters such / or ?
+## Labels have been manually reviewed -- elimination special characters such / or ? or - 
+## This will allow the rest of the script to run smoothly
 label <- read.csv("data/homevisit_label.csv", na.strings="", stringsAsFactors=FALSE)
 
 ## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
@@ -64,21 +60,20 @@ homevisit3 <- homevisit3 [!(homevisit3$Household.information.Family.Size >= 20),
 
 
 #Eliminate Rows with Number of Rooms is = 0 and Number of Rooms is >= 10 (Total of 24 records present with 0, 14, 16 and 60 rooms):
-homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities.<- as.numeric(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities.)
-homevisit3 <- homevisit3 [!(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities.== 0),]
-homevisit3 <- homevisit3 [!(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities. >= 10),]
+
+#View(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
+
+homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities. <- as.numeric(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
+homevisit3 <- homevisit3 [!(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.== 0),]
+homevisit3 <- homevisit3 [!(homevisit3$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities. >= 10),]
 
 
-
-
-
-# Clean:
 #View(vafbaseline$Volunteer..Case.Status...Available) ##  not present in Df... 
 #vafbaseline <- vafbaseline [!(vafbaseline$Volunteer..Case.Status...Available==0),]
 
 
 
-View(homevisit3$Financial.Situation.Total.Expenditure)
+#View(homevisit3$Financial.Situation.Total.Expenditure)
 homevisit3$Financial.Situation.Total.Expenditure<- as.numeric(homevisit3$Financial.Situation.Total.Expenditure)
 homevisit3 <- homevisit3 [!(homevisit3$Financial.Situation.Total.Expenditure==0),]
 

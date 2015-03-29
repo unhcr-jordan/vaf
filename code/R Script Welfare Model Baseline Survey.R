@@ -6,23 +6,23 @@
 # Proportional regional allocation
 
 # Import data:
-vafbaseline <- read.csv("data/vafbaseline.csv")
+#vafbaseline <- read.csv("data/vafbaseline.csv")
 
-# Replace Null with 0 in data.frame:
-vafbaseline[is.na(vafbaseline)] <- 0
+vafbaseline <- read.csv("data/Home_visit_version3.csv", skip=1)
+vafbaseline_back <- vafbaseline
+vafbaseline <- vafbaseline_back
+## Label are not easily legible
+## Labels have been manually reviewed
+label <- read.csv("data/homevisit_label.csv")
 
-# Clean:
-vafbaseline <- vafbaseline [!(vafbaseline$Volunteer..Case.Status...Available==0),]
+## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
+names(vafbaseline) <- label[, 3]
 
-vafbaseline <- vafbaseline [!(vafbaseline$Household.information.Family.Size==0),]
-vafbaseline <- vafbaseline [!(vafbaseline$Household.information.Family.Size >= 20),]
 
-vafbaseline <- vafbaseline [!(vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities.== 0),]
-vafbaseline <- vafbaseline [!(vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities. >= 10),]
-
-vafbaseline <- vafbaseline [!(vafbaseline$Financial.Situation.Total.Expenditure==0),]
 
 # Create Regional Dummies:
+
+levels(vafbaseline$Household.information.Governorate.)
 north <- ifelse((vafbaseline$Household.information.Governorate..Irbid == "1" | vafbaseline$Household.information.Governorate..Ajloun == "1" | vafbaseline$Household.information.Governorate..Jerash == "1"), 1, 0)
 center <- ifelse((vafbaseline$Household.information.Governorate..Amman == "1" | vafbaseline$Household.information.Governorate..Balqa == "1" | vafbaseline$Household.information.Governorate..Madaba == "1" | vafbaseline$Household.information.Governorate..Zarqa == "1"), 1, 0)
 east <- ifelse((vafbaseline$Household.information.Governorate..Mafraq == "1"), 1, 0)
@@ -37,41 +37,42 @@ vafbaseline <- cbind(vafbaseline, south)
 # Expenditure
 vafbaseline$Financial.Situation.Total.Expenditure <- as.numeric(vafbaseline$Financial.Situation.Total.Expenditure) # can't generate quotient variable if factor (and other)
 vafbaseline$Household.information.Family.Size <- as.numeric(vafbaseline$Household.information.Family.Size)
-Expenditure.Per.Capita <- (vafbaseline$Financial.Situation.Total.Expenditure/vafbaseline$Household.information.Family.Size)
-vafbaseline <- cbind(vafbaseline, Expenditure.Per.Capita) # necessary for subset regression
+vafbaseline$Expenditure.Per.Capita <- (vafbaseline$Financial.Situation.Total.Expenditure/vafbaseline$Household.information.Family.Size)
+#vafbaseline <- cbind(vafbaseline, Expenditure.Per.Capita) # necessary for subset regression
 
 # Income
 vafbaseline$Financial.Situation.Total.income.. <- as.numeric(vafbaseline$Financial.Situation.Total.income..)
-Income.Per.Capita <- (vafbaseline$Financial.Situation.Total.income../vafbaseline$Household.information.Family.Size)
-Income.Per.Capita.Squared <- (vafbaseline$Financial.Situation.Total.income../vafbaseline$Household.information.Family.Size)^2
-vafbaseline <- cbind(vafbaseline, Income.Per.Capita) # necessary for subset regression
-vafbaseline <- cbind(vafbaseline, Income.Per.Capita.Squared) # necessary for subset regression
+vafbaseline$Income.Per.Capita <- (vafbaseline$Financial.Situation.Total.income../vafbaseline$Household.information.Family.Size)
+vafbaseline$Income.Per.Capita.Squared <- (vafbaseline$Financial.Situation.Total.income../vafbaseline$Household.information.Family.Size)^2
+
+#vafbaseline <- cbind(vafbaseline, Income.Per.Capita) # necessary for subset regression
+#vafbaseline <- cbind(vafbaseline, Income.Per.Capita.Squared) # necessary for subset regression
 
 # House Crowding
 vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities. <- as.numeric(vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities.)
-House.Crowding <- (vafbaseline$Household.information.Family.Size/vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.facilities.)
-House.Crowding.Squared <- (House.Crowding)^2
-vafbaseline <- cbind(vafbaseline, House.Crowding) # necessary for subset regression
-vafbaseline <- cbind(vafbaseline, House.Crowding.Squared) # necessary for subset regression
+vafbaseline$House.Crowding <- (vafbaseline$Household.information.Family.Size / vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
+vafbaseline$House.Crowding.Squared <- (vafbaseline$House.Crowding)^2
+#vafbaseline <- cbind(vafbaseline, House.Crowding) # necessary for subset regression
+#vafbaseline <- cbind(vafbaseline, House.Crowding.Squared) # necessary for subset regression
 
 # Debt to Expenditure
-vafbaseline$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc.. <- as.numeric(vafbaseline$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc..)
-Debt.To.Expenditure <- (vafbaseline$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc../vafbaseline$Financial.Situation.Total.Expenditure)
-vafbaseline <- cbind(vafbaseline, Debt.To.Expenditure) # necessary for subset regression
+vafbaseline$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now?.-This.should.include.not.paying.the.rent..etc.- <- as.numeric(vafbaseline$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now?.-This.should.include.not.paying.the.rent..etc.-)
+vafbaseline$Debt.To.Expenditure <- (vafbaseline$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc../vafbaseline$Financial.Situation.Total.Expenditure)
+#vafbaseline <- cbind(vafbaseline, Debt.To.Expenditure) # necessary for subset regression
 
 # Debt Per Capita:
-Debt.Per.Capita <- (vafbaseline$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc../vafbaseline$Household.information.Family.Size)
-vafbaseline <- cbind(vafbaseline, Debt.Per.Capita) # necessary for subset regression
+vafbaseline$Debt.Per.Capita <- (vafbaseline$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc../vafbaseline$Household.information.Family.Size)
+#vafbaseline <- cbind(vafbaseline, Debt.Per.Capita) # necessary for subset regression
 
 # Family Size
-Family.Size <- (vafbaseline$Household.information.Family.Size)
-Family.Size.Squared <- (vafbaseline$Household.information.Family.Size)^2
-vafbaseline <- cbind(vafbaseline, Family.Size) # necessary for subset regression
-vafbaseline <- cbind(vafbaseline, Family.Size.Squared) # necessary for subset regression
+vafbaseline$Family.Size <- (vafbaseline$Household.information.Family.Size)
+vafbaseline$Family.Size.Squared <- (vafbaseline$Household.information.Family.Size)^2
+#vafbaseline <- cbind(vafbaseline, Family.Size) # necessary for subset regression
+#vafbaseline <- cbind(vafbaseline, Family.Size.Squared) # necessary for subset regression
 
 # Rent
-Rent.Occupancy <- ifelse(vafbaseline$Payment.Type.of.occupancy..For.rent == "1", 1, 0) 
-vafbaseline <- cbind(vafbaseline, Rent.Occupancy) # necessary for subset regression
+vafbaseline$Rent.Occupancy <- ifelse(vafbaseline$Payment.Type.of.occupancy..For.rent == "1", 1, 0) 
+#vafbaseline <- cbind(vafbaseline, Rent.Occupancy) # necessary for subset regression
 
 # Spices & Condiments
 Spices.And.Condiments.Bought.With.Cash <- ifelse(vafbaseline$Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0.7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices...condiment.bought.with.cash == "1", 1, 0)
@@ -139,6 +140,7 @@ vafbaseline <- vafbaseline [!(vafbaseline$Type.of.Housing.Number.of.rooms.exclud
 vafbaseline <- vafbaseline [!(vafbaseline$Type.of.Housing.Number.of.rooms.excluding.the.kitchen...WASH.fac >= 10),]
 
 vafbaseline <- vafbaseline [!(vafbaseline$Financial.Situation.Total.Expenditure==0),]
+
 
 # Expenditure
 vafbaseline$Financial.Situation.Total.Expenditure <- as.numeric(vafbaseline$Financial.Situation.Total.Expenditure) # can't generate quotient variable if factor (and other)

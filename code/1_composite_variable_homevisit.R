@@ -1,6 +1,6 @@
 ##########################################################################
 #### Import data & Rename variable
-source("code/import_clean_rename_homevisit3.R")
+source("code/0_import_clean_rename_homevisit3.R")
 
 
 ##########################################################################
@@ -26,7 +26,7 @@ hve3 <- homevisit3
 #Dummy.Uni.PA <- (hve2$EducationLevelCode.PA.)
 #hve3 <- cbind(hve2,Dummy.Uni.PA)
 
-hve3$EducationLevelCode.PA. <- ""
+hve3$Dummy.Uni.PA <- ""
 
 hve3$Dummy.Uni.PA <- as.character(hve3$Dummy.Uni.PA)
 hve3$Dummy.Uni.PA[hve3$Dummy.Uni.PA=="14"] <- 0
@@ -53,7 +53,6 @@ hve3$Dummy.Uni.PA[hve3$Dummy.Uni.PA=="Post university level"] <- 1
 hve3$Dummy.Uni.PA <- as.numeric(hve3$Dummy.Uni.PA)
 #Must replace NA cells with 0:
 hve3$Dummy.Uni.PA[is.na(hve3$Dummy.Uni.PA)] <- 0
-Dummy.Uni.PA <- hve3$Dummy.Uni.PA
 
 
 #Education PA (Quasi-continuous)
@@ -81,42 +80,43 @@ hve3$ln.Expenditure.Per.Capita <- as.numeric(hve3$ln.Expenditure.Per.Capita)
 
 
 #Income Per Capita:
-hve3$Income.Per.Capita <- (hve3$Financial.Situation.Total.income../hve3$Household.information.Family.Size)
-#Income Per Capita Squared:
-hve3$Income.Per.Capita.Squared <- (hve3$Financial.Situation.Total.income../hve3$Household.information.Family.Size)^2
-#hve3 <- cbind(hve3,Income.Per.Capita.Squared)
-
+hve3$Income.Per.Capita <- ( as.numeric(hve3$Financial.Situation.Total.income..) / as.numeric(hve3$Household.information.Family.Size) ) 
+hve3$Income.Per.Capita.Squared <- ( as.numeric(hve3$Financial.Situation.Total.income..) / as.numeric(hve3$Household.information.Family.Size) ) ^2
 
 #Debt To Expenditure (Must Create Duplicate, Replace 0 with 1):
-hve3$Total.Expenditure2 <- (hve3$Financial.Situation.Total.Expenditure)
+hve3$Total.Expenditure2 <- as.numeric(hve3$Financial.Situation.Total.Expenditure)
 hve3$Total.Expenditure2[hve3$Total.Expenditure2 == "0"] <- "1"
 hve3$Total.Expenditure2 <- as.numeric(hve3$Total.Expenditure2)
-hve3$Debt.To.Expenditure <- (hve3$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc.. /
+
+#str(hve3$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now..This.should.include.not.paying.the.rent..etc)
+hve3$Debt.To.Expenditure <- ( as.numeric (hve3$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now..This.should.include.not.paying.the.rent..etc) /
                                hve3$Total.Expenditure2)
 
 
 
 #Debt To Income (Must Create Duplicate, Replace 0 with 1 for INF):
-hve3$Total.Income2 <- (hve3$Financial.Situation.Total.income..)
+hve3$Total.Income2 <- as.numeric(hve3$Financial.Situation.Total.income..)
 hve3$Total.Income2[hve3$Total.Income2 == "0"] <- "1"
 hve3$Total.Income2 <- as.numeric(hve3$Total.Income2)
-hve3$Debt.To.Income <- (hve3$Poverty...Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now...This.should.include.not.paying.the.rent..etc.. /
-                          Total.Income2)
+
+hve3$Debt.To.Income <- ( as.numeric (hve3$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now..This.should.include.not.paying.the.rent..etc) /
+                          hve3$Total.Income2)
 
 #Family Size Squared:
-hve3$Family.Size.Squared <- (hve3$Household.information.Family.Size)^2
+hve3$Family.Size.Squared <- as.numeric(hve3$Household.information.Family.Size)^2
+View(Type.of.Housing.Number.of.family.members.in.the.house.-both.in.the.same.file.number.or.in.another.file-.)
 hve3$Family.Size.All.File.Numbers.Squared <- (hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)^2
 
 
 
 #Coping Strategies to Meet Basic Food Needs:
-hve3$Coping.Strategies.Basic.Food.Needs <- (hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Spent.savings.Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Spent.savings.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore + 
+hve3$Coping.Strategies.Basic.Food.Needs <- (  hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Spent.savings.Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Spent.savings.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore + 
                                               hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Bought.food.on.credit.or.borrowed.money.to.purchase.food.Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Bought.food.on.credit.or.borrowed.money.to.purchase.food.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Reduced.essential.non.food.expenditure.such.as.education.health.Yes +
                                               hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Reduced.essential.non.food.expenditure.such.as.education.health.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sell.household.goods..jewelry..phone..furniture..electro.domestics..etc..Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sell.household.goods..jewelry..phone..furniture..electro.domestics..etc..No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sell.productive.assets.or.means.of.transport..sewing.machine..car..wheel.barrow..bicycle..motorbike..etc..Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sell.productive.assets.or.means.of.transport..sewing.machine..car..wheel.barrow..bicycle..motorbike..etc..No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Since.arriving.in.Jordan..have.you.accepted.high.risk..illegal..socially.degrading.or.exploitive.temporary.jobs.Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Since.arriving.in.Jordan..have.you.accepted.high.risk..illegal..socially.degrading.or.exploitive.temporary.jobs.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sent.adult.family.members.to.beg.Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sent.adult.family.members.to.beg.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sent.children..under.18..family.members.to.beg.Yes+hve3$n.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs..Sent.children..under.18..family.members.to.beg.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore)
 hve3$Coping.Strategies.Basic.Food.Needs.Squared <- (hve3$Coping.Strategies.Basic.Food.Needs)^2
 
 #Coping Strategies Used In Last Six Months:
-hve3$Coping.Strategies.Used.Last.Six.Months <- (hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Living.together.with.host.family..Jordanian...Syrian.+hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Sharing.costs.with.host.family..Jordanian...Syrian. + 
+hve3$Coping.Strategies.Used.Last.Six.Months <- (  hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Living.together.with.host.family..Jordanian...Syrian.+hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Sharing.costs.with.host.family..Jordanian...Syrian. + 
                                                   hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Support.from.family.members..irregular.remittances. + 
                                                   hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Support.from.host.community..Jordanian..+hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Humanitarian.assistance..CBOs..personal.donations..etc.. +
                                                   hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Selling.properties..jewelry..car..etc..+hve3$Poverty...Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months...Select.all.that.apply...Selling.food.vouchers +
@@ -127,50 +127,57 @@ hve3$Coping.Strategies.Used.Last.Six.Months.Squared <- (hve3$Coping.Strategies.U
 
 
 #House Assets:
-hve3$House.Assets <- (hve3$Type.of.Housing.Access.to.kitchen..Yes+hve3$Type.of.Housing.Access.to.sanitary.facilities..Yes +
-                        hve3$Type.of.Housing.Ventilation..Yes +
-                        hve3$Type.of.Housing.Access.to.electricity..Yes)
+hve3$House.Assets <- (hve3$Type.of.Housing.Access.to.kitchen..Yes +
+                      hve3$Type.of.Housing.Access.to.sanitary.facilities..Yes +
+                      hve3$Type.of.Housing.Ventilation..Yes +
+                      hve3$Type.of.Housing.Access.to.electricity..Yes
+                      )
 hve3$House.Assets.To.Family.Size <- (hve3$House.Assets / hve3$Household.information.Family.Size)
 
 
 #House Poor Conditions Observed:
-hve3$House.Poor.Conditions <- (hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Damp.walls + 
+hve3$House.Poor.Conditions <- (  hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Damp.walls + 
                                  hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Leaking.roofs + 
                                  hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Hygienic.concerns + 
                                  hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Privacy.concern + 
                                  hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Rodents + 
                                  hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..Poor.insulation..winter...summer. + 
-                                 hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..broken.windows)
+                                 hve3$Type.of.Housing.Please.specify.if.any.of.the.following.is.observed..broken.windows
+                               )
 #NO: hpcfs<-(House.Poor.Conditions/hve3$Household.information.Family.Size) #NO
 
 #Chronic Diseases in Family:
-hve3$Chronic.Diseases <- (hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Hypertension +
+hve3$Chronic.Diseases <- (  hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Hypertension +
                             hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Diabetes +
                             hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Cardiovascular +
                             hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Critical.medical.condition..life.threatening. +
-                            hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Other..specify)
+                            hve3$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Other..specify
+                            )
 #NO: cdfs<-(Chronic.Diseases/hve3$Household.information.Family.Size) #ok
 
 
 #Vaccinations Not Received:
-hve3$Vaccinations.Not.Received <- (hve3$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.measles..Yes +
+hve3$Vaccinations.Not.Received <- (  hve3$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.measles..Yes +
                                      hve3$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.polio...child.who.never.had.a.polio.dose..Yes +
-                                     hve3$Vaccination.If.you.have.children.under.2.years..have.they.received.routine.vaccines..EPI....Note..As.this.is.sometimes.difficult.for.household.and.staff.to.distinguish.from.above..could.use.a.proxy...question.such.as..do.you.have.children.under.2.who.have.a.vaccination.card...Yes)
+                                     hve3$Vaccination.If.you.have.children.under.2.years..have.they.received.routine.vaccines..EPI....Note..As.this.is.sometimes.difficult.for.household.and.staff.to.distinguish.from.above..could.use.a.proxy...question.such.as..do.you.have.children.under.2.who.have.a.vaccination.card...Yes
+                                     )
 
 #Disabilities in Family:
-hve3$Disability.In.Family <- (hve3$Age...Disability.details.Age...0.17.years.old +
+hve3$Disability.In.Family <- (  hve3$Age...Disability.details.Age...0.17.years.old +
                                 hve3$Age...Disability.details.Age...18.60.years.old +
-                                hve3$Age...Disability.details.Age...61.years.and.above)
+                                hve3$Age...Disability.details.Age...61.years.and.above
+                                )
 
 #House Luxury Assets:
-hve3$House.Luxury.Assets <- (hve3$Type.of.Housing.Assets...Floor.mattress+hve3$Type.of.Housing.Assets...Sofa.set +
+hve3$House.Luxury.Assets <- (  hve3$Type.of.Housing.Assets...Floor.mattress+hve3$Type.of.Housing.Assets...Sofa.set +
                                hve3$Type.of.Housing.Assets...Kitchen.utilities + 
                                hve3$Type.of.Housing.Assets...Computer+hve3$Type.of.Housing.Assets...Blankets +
                                hve3$Type.of.Housing.Assets...Stove+hve3$Type.of.Housing.Assets...Washing.machine +
                                hve3$Type.of.Housing.Assets...Table.chairs+hve3$Type.of.Housing.Assets...Cabinets +
                                hve3$Type.of.Housing.Assets...Fridge+hve3$Type.of.Housing.Assets...Television +
                                hve3$Type.of.Housing.Assets...Water.heater+hve3$Type.of.Housing.Assets...Freezer +
-                               hve3$Type.of.Housing.Assets...Other..specify)
+                               hve3$Type.of.Housing.Assets...Other..specify
+                               )
 #NO: lafs<-(hve3$House.Luxury.Assets/hve3$Household.information.Family.Size) 
 
 

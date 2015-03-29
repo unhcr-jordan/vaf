@@ -1,39 +1,17 @@
+
+##########################################################################
+#### Import data & Rename variable
+source("code/import_clean_rename_homevisit3.R")
+
+
+
 require(maptools) ## Create maps
 require(rgdal) ## Open geographic files
 require(rgeos)
 
-## Extracted from https://www.unhcrmenadagdata.org/RaisJordan
-## The export has two line of header so we need to skip the first one
-homevisit <- read.csv("data/Home_visit_version3.csv", skip=1)
-
-homevisit3 <- homevisit
-
-## Label are not easily legible
-## Labels have been manually reviewed
-label <- read.csv("data/homevisit_label.csv")
-
-## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
-names(homevisit3) <- label[, 3]
-# 
-str(homevisit3)
-rm(label)
-
-## extracting coordinates from dataset
-homevisit3$geo <- as.character(homevisit3$Household.information.address..)
-options(digits = 15)
-homevisit3$lat <- as.numeric(substr(homevisit3$geo , 1,13))
-homevisit3$long <- as.numeric(substr( homevisit3$geo, 15,27))
-
-
-### Eliminate record without coordinates
-homevisit3 <-homevisit3[!rowSums(is.na(homevisit3["lat"])), ]
-homevisit3 <-homevisit3[!rowSums(is.na(homevisit3["long"])), ]
-
-# str(homevisit3)
-
 
 ###############################################################
-## Create a spatial data frame with vaf records
+## Create a spatial data frame with hv records
 rm(datasp)
 datasp1 <-homevisit3[ , c("long", "lat")]
 # summary(datasp)
@@ -61,18 +39,18 @@ map1 <- map1 +
   ggtitle("Home Visit")+
   theme_bw()
 ggsave("out/map1.png", map1, width=8, height=6,units="in", dpi=300)
-
+rm(map1)
 
 ###############################################################
 ### Hebin Map Overlay in gplot2
 ##############################################################
 
-homevisit4 <-homevisit3[!rowSums(is.na(homevisit3["Household.information.Family.Size"])), ]
+homevisit.familysize <-homevisit3[!rowSums(is.na(homevisit3["Household.information.Family.Size"])), ]
 require("hexbin")
 rm(map2)
 map2 <- googleeterrain
 map2 <- map2+
-  stat_summary_hex(aes(x= homevisit4$long,  y= homevisit4$lat, z = homevisit4$Household.information.Family.Size ), alpha = 7/10)+
+  stat_summary_hex(aes(x= homevisit.familysize$long,  y= homevisit.familysize$lat, z = homevisit.familysize$Household.information.Family.Size ), alpha = 7/10)+
   #coord_equal() +
   theme_bw() + 
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
@@ -81,6 +59,9 @@ map2 <- map2+
 
 # Save this!
 ggsave("out/map2.png", map2, width=8, height=6,units="in", dpi=300)
+
+rm(homevisit.familysize)
+rm(map2)
 
 ###############################################################
 ### Graph example with gplot2
@@ -95,19 +76,19 @@ require("reshape2")
 # extract on asset per family size
 homevisit3.assets <- melt(homevisit3, id=c("Household.information.Family.Size"),
                           measure=c("Type.of.Housing.Assets...Floor.mattress",
-                                                           "Type.of.Housing.Assets...Sofa.set",
-                                                           "Type.of.Housing.Assets...Kitchen.utilities",
-                                                           "Type.of.Housing.Assets...Computer",
-                                                           "Type.of.Housing.Assets...Blankets",
-                                                           "Type.of.Housing.Assets...Stove",
-                                                           "Type.of.Housing.Assets...Washing.machine",
-                                                           "Type.of.Housing.Assets...Table-chairs",
-                                                           "Type.of.Housing.Assets...Cabinets",
-                                                           "Type.of.Housing.Assets...Fridge",
-                                                           "Type.of.Housing.Assets...Television",
-                                                           "Type.of.Housing.Assets...Water.heater",
-                                                           "Type.of.Housing.Assets...Freezer",
-                                                           "Type.of.Housing.Assets...Other..specify"))
+                                    "Type.of.Housing.Assets...Sofa.set",
+                                    "Type.of.Housing.Assets...Kitchen.utilities",
+                                    "Type.of.Housing.Assets...Computer",
+                                    "Type.of.Housing.Assets...Blankets",
+                                    "Type.of.Housing.Assets...Stove",
+                                    "Type.of.Housing.Assets...Washing.machine",
+                                    "Type.of.Housing.Assets...Table-chairs",
+                                    "Type.of.Housing.Assets...Cabinets",
+                                    "Type.of.Housing.Assets...Fridge",
+                                    "Type.of.Housing.Assets...Television",
+                                    "Type.of.Housing.Assets...Water.heater",
+                                    "Type.of.Housing.Assets...Freezer",
+                                    "Type.of.Housing.Assets...Other..specify"))
 
 
 ## Reorder factor level according to a value
@@ -131,7 +112,7 @@ homevisit3.assets2 <- dcast(homevisit3.assets, Household.information.Family.Size
 # Bar graph based on reordered variable per value
 asset.plot <- ggplot(data=homevisit3.assets, aes(x=reorder(variable, value) , y=value, fill=variable)) + 
   geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
- # geom_text(aes(label=variable), vjust=0) +
+  # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
   coord_flip()+
   xlab("Asset") + 

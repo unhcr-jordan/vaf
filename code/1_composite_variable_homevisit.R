@@ -58,6 +58,7 @@ hve3$Debt.To.Income <- ( as.numeric (hve3$Poverty.and.Coping.Strategies.What.is.
                           hve3$Total.Income2)
 
 #Family Size Squared:
+hve3$Family.Size <- as.numeric(hve3$Household.information.Family.Size)
 hve3$Family.Size.Squared <- as.numeric(hve3$Household.information.Family.Size)^2
 #View(hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)
 hve3$Family.Size.All.File.Numbers.Squared <- (hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)^2

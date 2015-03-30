@@ -48,11 +48,11 @@ rm(labeldata)
 
 hve4 <- hve3[, c( "Expenditure.Per.Capita" ,                                                                                                                                                                                                                                 
                   "ln.Expenditure.Per.Capita" ,                                                                                                                                                                                                                              
-                  "Income.Per.Capita"       ,                                                                                                                                                                                                                                
+                  "Income.Per.Capita",                                                                                                                                                                                                                                
                   "Income.Per.Capita.Squared"  ,                                                                                                                                                                                                                             
-                  "Total.Expenditure2"    ,                                                                                                                                                                                                                                  
-                  "Debt.To.Expenditure"  ,                                                                                                                                                                                                                                   
-                  "Total.Income2"    ,                                                                                                                                                                                                                                       
+                  "Total.Expenditure2" ,                                                                                                                                                                                                                                  
+                  "Debt.To.Expenditure" ,                                                                                                                                                                                                                                   
+                  "Total.Income2" ,                                                                                                                                                                                                                                       
                   "Debt.To.Income"  ,  
                   "Family.Size" ,
                   "Family.Size.Squared"  ,                                                                                                                                                                                                                                   
@@ -190,6 +190,8 @@ reg.full <- lm(Expenditure.Per.Capita ~
 summary(reg.full)
 reg.full.summary.coeff <- as.data.frame(summary(reg.full)$coefficients[, 1:4])
 
+
+
 #Final Welfare Model 2:
 reg.full.2 <- lm(Expenditure.Per.Capita ~
                    Debt.Per.Capita + ## This variable is changing
@@ -206,8 +208,19 @@ reg.full.2 <- lm(Expenditure.Per.Capita ~
 summary(reg.full.2) 
 reg.full.2.summary.coeff <- as.data.frame(summary(reg.full.2)$coefficients[, 1:4])
 
+### Generate predicted welfare index based on variables of the model
 
-
+hve4$predictedwellfare.modelregfull <- ( hve4$Debt.To.Expenditure * reg.full.summary.coeff[2,1]) +
+                                       ( hve4$House.Crowding * reg.full.summary.coeff[3,1]) +
+                                       ( hve4$House.Crowding.Squared * reg.full.summary.coeff[4,1]) +
+                                       ( hve4$Income.Per.Capita * reg.full.summary.coeff[5,1]) +
+                                       ( hve4$Income.Per.Capita.Squared * reg.full.summary.coeff[6,1]) +
+                                       ( hve4$Family.Size * reg.full.summary.coeff[7,1]) +
+                                       ( hve4$Family.Size.Squared * reg.full.summary.coeff[8,1]) +
+                                       ( hve4$Spices.And.Condiments.Bought.With.Cash * reg.full.summary.coeff[9,1]) +
+                                       ( hve4$Rent.Occupancy* reg.full.summary.coeff[10,1]) 
+  
+View(hve4$predictedwellfare.modelregfull)
 
 
 ######################################################################

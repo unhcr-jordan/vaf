@@ -7,7 +7,7 @@
 ## Extracted from https://www.unhcrmenadagdata.org/RaisJordan
 ## The export has two line of header so we need to skip the first one
 homevisit <- read.csv("data/Home_visit_version3.csv", skip=1)
-
+#homevisit <- read.csv("data/Home_visit_4.csv", skip=1)
 
 
 ################################################################
@@ -16,7 +16,8 @@ homevisit <- read.csv("data/Home_visit_version3.csv", skip=1)
 ## Labels have been manually reviewed -- elimination special characters such / or ? or - 
 ## Labels are also  trimmed when necessary so that they are less than 256 char long - 
 ## This will allow the rest of the script to run smoothly
-label <- read.csv("data/homevisit_label.csv", na.strings="", stringsAsFactors=FALSE)
+label <- read.csv("data/homevisit3_label.csv", na.strings="", stringsAsFactors=FALSE)
+#label <- read.csv("data/homevisit4_label.csv", na.strings="", stringsAsFactors=FALSE)
 
 ## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
 names(homevisit) <- label[, 3]
@@ -74,4 +75,7 @@ homevisit3 <- homevisit3 [!(homevisit3$Type.of.Housing.Number.of.rooms.excluding
 #View(homevisit3$Financial.Situation.Total.Expenditure)
 homevisit3$Financial.Situation.Total.Expenditure<- as.numeric(homevisit3$Financial.Situation.Total.Expenditure)
 homevisit3 <- homevisit3 [!(homevisit3$Financial.Situation.Total.Expenditure==0),]
+
+
+
 

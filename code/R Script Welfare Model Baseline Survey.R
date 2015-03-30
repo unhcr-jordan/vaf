@@ -186,10 +186,30 @@ Spices.And.Condiments.Bought.With.Cash <- ifelse(vafbaseline$Over.the.last.7.day
 vafbaseline <- cbind(vafbaseline, Spices.And.Condiments.Bought.With.Cash) # necessary for subset regression
 
 # Regressions Full:
-reg.full <- lm(Expenditure.Per.Capita~House.Crowding+House.Crowding.Squared+Income.Per.Capita+Income.Per.Capita.Squared+Debt.To.Expenditure+Family.Size+Family.Size.Squared+Spices.And.Condiments.Bought.With.Cash+Rent.Occupancy)
+reg.full <- lm(Expenditure.Per.Capita ~                 
+                 Debt.To.Expenditure + ## This variable is changing
+                 House.Crowding +
+                 House.Crowding.Squared +
+                 Income.Per.Capita +
+                 Income.Per.Capita.Squared +
+                 Family.Size +
+                 Family.Size.Squared +
+                 Spices.And.Condiments.Bought.With.Cash +
+                 Rent.Occupancy
+               )
 summary(reg.full)
 
-reg.full.2 <- lm(Expenditure.Per.Capita~House.Crowding+House.Crowding.Squared+Income.Per.Capita+Income.Per.Capita.Squared+Debt.Per.Capita+Family.Size+Family.Size.Squared+Spices.And.Condiments.Bought.With.Cash+Rent.Occupancy)
+reg.full.2 <- lm(Expenditure.Per.Capita ~
+                   Debt.Per.Capita + ## This variable is changing
+                   House.Crowding +
+                   House.Crowding.Squared +
+                   Income.Per.Capita +
+                   Income.Per.Capita.Squared +
+                   Family.Size +
+                   Family.Size.Squared +
+                   Spices.And.Condiments.Bought.With.Cash +
+                   Rent.Occupancy
+                 )
 summary(reg.full.2) 
 
 

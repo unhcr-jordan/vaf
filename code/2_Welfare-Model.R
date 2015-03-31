@@ -96,12 +96,12 @@ names(hve4)
 options(stringsAsFactors=FALSE)
 hvAR <- data.frame("ColumnNumber" = character(250), "ColumnName" = character(250), "rsquared" = numeric(5))
 i <- 1
-while (i<29) 
+while (i<30) 
 {
   reg <- lm(Expenditure.Per.Capita ~ hve4[,i], data=hve4);
   rsquared <- summary(reg)$r.squared;
   col1 <- as.character (i);
-  col2 <- as.character (colnames(hve3)[i]);
+  col2 <- as.character (colnames(hve4)[i]);
   col3 <- rsquared;
   if (rsquared >= 0.01) 
   {
@@ -173,26 +173,9 @@ reg2.summary.coeff <- as.data.frame(summary(reg2)$coefficients[, 1:4])
 
 
 
-#Final Welfare Model 1:
-# Regressions Full:
-reg.full <- lm(Expenditure.Per.Capita ~                 
-                 Debt.To.Expenditure + ## This variable is changing
-                 House.Crowding +
-                 House.Crowding.Squared +
-                 Income.Per.Capita +
-                 Income.Per.Capita.Squared +
-                 Family.Size +
-                 Family.Size.Squared +
-                 Spices.And.Condiments.Bought.With.Cash +
-                 Rent.Occupancy,            
-               data=hve4
-              )
-summary(reg.full)
-reg.full.summary.coeff <- as.data.frame(summary(reg.full)$coefficients[, 1:4])
 
 
-
-#Final Welfare Model 2:
+#Alternate Welfare Model:
 reg.full.2 <- lm(Expenditure.Per.Capita ~
                    Debt.Per.Capita + ## This variable is changing
                    House.Crowding +
@@ -208,9 +191,28 @@ reg.full.2 <- lm(Expenditure.Per.Capita ~
 summary(reg.full.2) 
 reg.full.2.summary.coeff <- as.data.frame(summary(reg.full.2)$coefficients[, 1:4])
 
+
+
+#Final Welfare Model: vw5
+# Regressions Full: 
+vw5 <- lm(Expenditure.Per.Capita ~                 
+            Debt.To.Expenditure + ## This variable is changing
+            House.Crowding +
+            House.Crowding.Squared +
+            Income.Per.Capita +
+            Income.Per.Capita.Squared +
+            Family.Size +
+            Family.Size.Squared +
+            Spices.And.Condiments.Bought.With.Cash +
+            Rent.Occupancy,            
+          data=hve4
+)
+summary(vw5)
+vw5.summary.coeff <- as.data.frame(summary(vw5)$coefficients[, 1:4])
+
 ### Generate predicted welfare index based on variables of the model
 
-hve4$predictedwellfare.modelregfull <- ( hve4$Debt.To.Expenditure * reg.full.summary.coeff[2,1]) +
+hve4$predictedwellfare.vw5 <- ( hve4$Debt.To.Expenditure * reg.full.summary.coeff[2,1]) +
                                        ( hve4$House.Crowding * reg.full.summary.coeff[3,1]) +
                                        ( hve4$House.Crowding.Squared * reg.full.summary.coeff[4,1]) +
                                        ( hve4$Income.Per.Capita * reg.full.summary.coeff[5,1]) +
@@ -220,7 +222,7 @@ hve4$predictedwellfare.modelregfull <- ( hve4$Debt.To.Expenditure * reg.full.sum
                                        ( hve4$Spices.And.Condiments.Bought.With.Cash * reg.full.summary.coeff[9,1]) +
                                        ( hve4$Rent.Occupancy* reg.full.summary.coeff[10,1]) 
   
-View(hve4$predictedwellfare.modelregfull)
+View(hve4$predictedwellfare.vw5)
 
 
 ######################################################################

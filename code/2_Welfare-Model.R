@@ -16,186 +16,30 @@ library(car)
 library(tseries)
 library(lme4)
 library(lmtest)
+library(classInt)
+library(plyr)
 
 
 ##################################################################
 ## Welfare model : The objective is predict the variable "Expenditure.Per.Capita"
-## In order to perform this, the first step is to identify variables with biggest explanatory power 
+## In order to perform this, the first step is to identify variables with biggest explanatory power
+## See script:  2_Welfare-Model_automated_regression.R 
 ## then some liner  regression in order to find the weight to be used for the prediction
 
 
 ######### First step subset the dataframe in order to keep the column that make snese for the regression.
 
-
-str(hve3)
-names(hve3)
-
-#Eliminate Columns with Arabic Text or potential ID:
-### Those variable are already identified in the label info in CSV - column 5 --
-
-labeldata <- read.csv("data/homevisit_label.csv", stringsAsFactors=FALSE)
-names(labeldata)
-dropvariable.homevisit <- labeldata[labeldata$identify=="yes",] 
-
-## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
-droplabel.homevisit <- dropvariable.homevisit[, 3]
-
-
-# str(droplabel.homevisit)
-rm(labeldata)  
-
-#hve4 <-hve3[,!(names(hve3) %in% droplabel.homevisit)]
-
-hve4 <- hve3[, c( "Expenditure.Per.Capita" ,                                                                                                                                                                                                                                 
-                  "ln.Expenditure.Per.Capita" ,                                                                                                                                                                                                                              
-                  "Income.Per.Capita",                                                                                                                                                                                                                                
-                  "Income.Per.Capita.Squared"  ,                                                                                                                                                                                                                             
-                  "Total.Expenditure2" ,                                                                                                                                                                                                                                  
-                  "Debt.To.Expenditure" ,                                                                                                                                                                                                                                   
-                  "Total.Income2" ,                                                                                                                                                                                                                                       
-                  "Debt.To.Income"  ,  
-                  "Family.Size" ,
-                  "Family.Size.Squared"  ,                                                                                                                                                                                                                                   
-                  "Family.Size.All.File.Numbers.Squared" ,                                                                                                                                                                                                                   
-                  "Coping.Strategies.Used.Last.Six.Months",                                                                                                                                                                                                                 
-                  "Coping.Strategies.Used.Last.Six.Months.Squared",                                                                                                                                                                                                          
-                  "House.Assets"  ,                                                                                                                                                                                                                                          
-                  "House.Assets.To.Family.Size" ,                                                                                                                                                                                                                            
-                  "House.Poor.Conditions" ,                                                                                                                                                                                                                                  
-                  "Chronic.Diseases"   ,                                                                                                                                                                                                                                     
-                  "Vaccinations.Not.Received" ,                                                                                                                                                                                                                              
-                  "Disability.In.Family",                                                                                                                                                                                                                                    
-                  "House.Luxury.Assets"  ,                                                                                                                                                                                                                                   
-                  "House.Crowding"     ,                                                                                                                                                                                                                                     
-                  "House.Crowding.Squared"   ,                                                                                                                                                                                                                               
-                  "House.Crowding.squared"  ,                                                                                                                                                                                                                                
-                  "House.Crowding.v2"   ,                                                                                                                                                                                                                                    
-                  "House.Crowding.v2.Squared" ,                                                                                                                                                                                                                              
-                  "Saving.Per.Family.Member" ,                                                                                                                                                                                                                               
-                  "Age.Related.Disability",                                                                                                                                                                                                                                  
-                  "Debt.Per.Capita"     ,                                                                                                                                                                                                                                    
-                  "Rent.Occupancy"     ,                                                                                                                                                                                                                                     
-                  "Spices.And.Condiments.Bought.With.Cash",
-                  #"Coping.Strategies.Basic.Food.Needs",
-                  #"Coping.Strategies.Basic.Food.Needs.Squared",
-                  "Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian",
-                  "Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..",
-                  "Payment.Type.of.occupancy..For.rent",
-                  "Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash"
-                  )]
-
-str(hve4)
-names(hve4)
-
-##########################################################################
-#AUTOMATED REGRESSIONS:
-##########################################################################
-## Allow to double check explanatory power - rsquared-  of the variables for the expenditure per capita
-## Caution: this is a heavy calculation -> we need to split the Df to make it manageable
-
-options(stringsAsFactors=FALSE)
-hvAR <- data.frame("ColumnNumber" = character(250), "ColumnName" = character(250), "rsquared" = numeric(5))
-i <- 1
-while (i<30) 
-{
-  reg <- lm(Expenditure.Per.Capita ~ hve4[,i], data=hve4);
-  rsquared <- summary(reg)$r.squared;
-  col1 <- as.character (i);
-  col2 <- as.character (colnames(hve4)[i]);
-  col3 <- rsquared;
-  if (rsquared >= 0.01) 
-  {
-    hvAR <- rbind(hvAR,c(col1, col2, col3))
-  }
-  i <- i + 1;
-}
-
-## Order the hVar dataframe by descending rsquared
-hvAR <- hvAR[order(- rsquared),]
-
-## We keep a backup of this: 
-write.csv(hvAR, file = "out/hvAR.csv")
-
-## Let's check the top 10 variables with the biggest Rsquarred -- This will give us the variable to be included for further regression
-head(hvAR, n=10)
+hve.model <- hve
 
 
 ##########################################################################
-#REGRESSION MODELS: 
+#REGRESSION MODELS:
 ##########################################################################
-#Preliminary Welfare Model:
-reg1 <- lm(  Expenditure.Per.Capita ~ 
-              House.Crowding +
-              House.Crowding.Squared +
-             # Coping.Strategies.Basic.Food.Needs +
-             # Coping.Strategies.Basic.Food.Needs.Squared +
-              Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian +
-              Saving.Per.Family.Member +
-              Debt.To.Expenditure +
-              Income.Per.Capita +
-              Income.Per.Capita.Squared +
-              Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. +
-              Family.Size.All.File.Numbers.Squared,            
-            data=hve4
-          )
-
-### Write results in a dataframe to calculte predicted welfare index:
-########################################################
-#sink("out/summaryreg1.txt")
-#summary(reg1)
-#sink()
-#str(summary(reg1))
-#reg1.r.squared  <- as.data.frame(summary(reg1)$r.squared )
-#reg1.adj.r.squared <- as.data.frame(summary(reg1)$adj.r.squared)
-reg1.summary.coeff <- as.data.frame(summary(reg1)$coefficients[, 1:4])
 
 
-#Preliminary Welfare Model 2:
-reg2 <- lm( Expenditure.Per.Capita ~
-              House.Crowding +
-              House.Crowding.Squared +
-            #  Coping.Strategies.Basic.Food.Needs +
-             # Coping.Strategies.Basic.Food.Needs.Squared +
-              Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian +
-              Saving.Per.Family.Member +
-              Debt.To.Expenditure +
-              Income.Per.Capita +
-              Income.Per.Capita.Squared+
-              Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. +
-              Family.Size.All.File.Numbers.Squared +
-              Payment.Type.of.occupancy..For.rent + ## Additional variables
-              Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash,   ## additional variables         
-            data=hve4
-            )
-
-summary(reg2)
-reg2.summary.coeff <- as.data.frame(summary(reg2)$coefficients[, 1:4])
-
-
-
-
-
-#Alternate Welfare Model:
-reg.full.2 <- lm(Expenditure.Per.Capita ~
-                   Debt.Per.Capita + ## This variable is changing
-                   House.Crowding +
-                   House.Crowding.Squared +
-                   Income.Per.Capita +
-                   Income.Per.Capita.Squared +
-                   Family.Size +
-                   Family.Size.Squared +
-                   Spices.And.Condiments.Bought.With.Cash +
-                   Rent.Occupancy,            
-                 data=hve4
-               )
-summary(reg.full.2) 
-reg.full.2.summary.coeff <- as.data.frame(summary(reg.full.2)$coefficients[, 1:4])
-
-
-
-#Final Welfare Model: vw5
-# Regressions Full: 
-vw5 <- lm(Expenditure.Per.Capita ~                 
+#Final - VAF Only - Welfare Model: vw5 -- on dataset v3 -- ie.e full dataset -snowball sample
+# Regressions Full:
+vw5.v3 <- lm(Expenditure.Per.Capita ~
             Debt.To.Expenditure + ## This variable is changing
             House.Crowding +
             House.Crowding.Squared +
@@ -204,31 +48,70 @@ vw5 <- lm(Expenditure.Per.Capita ~
             Family.Size +
             Family.Size.Squared +
             Spices.And.Condiments.Bought.With.Cash +
-            Rent.Occupancy,            
-          data=hve4
+            Rent.Occupancy,
+          data=hve[ hve$dataset == "homevisit3",  ]
 )
-summary(vw5)
-vw5.summary.coeff <- as.data.frame(summary(vw5)$coefficients[, 1:4])
+#summary(vw5)
+vw5.v3.summary.coeff <- as.data.frame(summary(vw5.v3)$coefficients[, 1:4])
 
-### Generate predicted welfare index based on variables of the model
 
-hve4$predictedwellfare.vw5 <- ( hve4$Debt.To.Expenditure * reg.full.summary.coeff[2,1]) +
-                                       ( hve4$House.Crowding * reg.full.summary.coeff[3,1]) +
-                                       ( hve4$House.Crowding.Squared * reg.full.summary.coeff[4,1]) +
-                                       ( hve4$Income.Per.Capita * reg.full.summary.coeff[5,1]) +
-                                       ( hve4$Income.Per.Capita.Squared * reg.full.summary.coeff[6,1]) +
-                                       ( hve4$Family.Size * reg.full.summary.coeff[7,1]) +
-                                       ( hve4$Family.Size.Squared * reg.full.summary.coeff[8,1]) +
-                                       ( hve4$Spices.And.Condiments.Bought.With.Cash * reg.full.summary.coeff[9,1]) +
-                                       ( hve4$Rent.Occupancy* reg.full.summary.coeff[10,1]) 
-  
-View(hve4$predictedwellfare.vw5)
+### Generate predicted welfare index based on variables of the model generated through v3 dataset
+hve$predictedwellfare.vw5.v3 <- ( hve$Debt.To.Expenditure * vw5.v3.summary.coeff[2,1]) +
+  ( hve$House.Crowding * vw5.v3.summary.coeff[3,1]) +
+  ( hve$House.Crowding.Squared * vw5.v3.summary.coeff[4,1]) +
+  ( hve$Income.Per.Capita * vw5.v3.summary.coeff[5,1]) +
+  ( hve$Income.Per.Capita.Squared * vw5.v3.summary.coeff[6,1]) +
+  ( hve$Family.Size * vw5.v3.summary.coeff[7,1]) +
+  ( hve$Family.Size.Squared * vw5.v3.summary.coeff[8,1]) +
+  ( hve$Spices.And.Condiments.Bought.With.Cash * vw5.v3.summary.coeff[9,1]) +
+  ( hve$Rent.Occupancy* vw5.v3.summary.coeff[10,1])
+#View(hve$predictedwellfare.vw5.v3)
+## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
+hve$predictedwellfare.vw5.v3.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v3, n = 4, style = "fixed", fixedBreaks = c(-10000, 28, 68 , 100))))
+hve$predictedwellfare.vw5.v3.class <- revalue(hve$predictedwellfare.vw5.v3.class, c(`1` = "Severe", `2` = "High", `3` = "Moderate", `4` = "Low"))
+hve$predictedwellfare.vw5.v3.class  <- factor(hve$predictedwellfare.vw5.v3.class, levels = c("Severe", "High", "Moderate", "Low"))
+View(hve$predictedwellfare.vw5.v3.class)
+
+
+#Final Welfare Model: vw5 -- on dataset v4 -- i.e. representative sample
+# Regressions Full:
+vw5.v4 <- lm(Expenditure.Per.Capita ~
+               Debt.To.Expenditure + ## This variable is changing
+               House.Crowding +
+               House.Crowding.Squared +
+               Income.Per.Capita +
+               Income.Per.Capita.Squared +
+               Family.Size +
+               Family.Size.Squared +
+               Spices.And.Condiments.Bought.With.Cash +
+               Rent.Occupancy,
+             data=hve[ hve$dataset == "homevisit4",  ]
+)
+#summary(vw5)
+vw5.v4.summary.coeff <- as.data.frame(summary(vw5.v4)$coefficients[, 1:4])
+### Generate predicted welfare index based on variables of the model generated through v4 dataset
+hve$predictedwellfare.vw5.v4 <- ( hve$Debt.To.Expenditure * vw5.v4.summary.coeff[2,1]) +
+  ( hve$House.Crowding * vw5.v4.summary.coeff[3,1]) +
+  ( hve$House.Crowding.Squared * vw5.v4.summary.coeff[4,1]) +
+  ( hve$Income.Per.Capita * vw5.v4.summary.coeff[5,1]) +
+  ( hve$Income.Per.Capita.Squared * vw5.v4.summary.coeff[6,1]) +
+  ( hve$Family.Size * vw5.v4.summary.coeff[7,1]) +
+  ( hve$Family.Size.Squared * vw5.v4.summary.coeff[8,1]) +
+  ( hve$Spices.And.Condiments.Bought.With.Cash * vw5.v4.summary.coeff[9,1]) +
+  ( hve$Rent.Occupancy* vw5.v4.summary.coeff[10,1])
+#View(hve$predictedwellfare.vw5.v3)
+## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
+hve$predictedwellfare.vw5.v4.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v4 , n = 4, style = "fixed", fixedBreaks = c(-10000, 28, 68 , 100))))
+hve$predictedwellfare.vw5.v4.class <- revalue(hve$predictedwellfare.vw5.v4.class, c(`1` = "Severe", `2` = "High", `3` = "Moderate", `4` = "Low"))
+hve$predictedwellfare.vw5.v4.class  <- factor(hve$predictedwellfare.vw5.v4.class, levels = c("Severe", "High", "Moderate", "Low"))
+
+
 
 
 ######################################################################
-#Bonferroni outliers : Eliminate records 
+#Bonferroni outliers : Eliminate records
 ####################################################################
- 
+
 outlierTest(reg2)
 
 #Leverage & Hat-values outliers:
@@ -243,7 +126,7 @@ unname(which(cooks.distance(reg2)>4/reg2$df.residual))
 #Matching Outliers:
 outlier <- hve4[-c(4247,2444,4167,823,616,2716,4210,733),]
 
-#THE WELFARE MODEL: 7 Variables = 55.87  
+#THE WELFARE MODEL: 7 Variables = 55.87
 regoutlier1 <- lm( Expenditure.Per.Capita ~
                      House.Crowding +
                      House.Crowding.Squared +
@@ -253,25 +136,25 @@ regoutlier1 <- lm( Expenditure.Per.Capita ~
                      Saving.Per.Family.Member+Debt.To.Expenditure +
                      Income.Per.Capita+Income.Per.Capita.Squared +
                      Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. +
-                     Family.Size.All.File.Numbers.Squared,            
-           data=outlier)
+                     Family.Size.All.File.Numbers.Squared,
+                   data=outlier)
 summary(regoutlier1)
 regoutlier1.summary.coeff <- as.data.frame(summary(regoutlier1)$coefficients[, 1:4])
 
 #THE WELFARE MODEL: 9 Variables = 57.13
 regoutlier2 <- lm( Expenditure.Per.Capita ~
-                House.Crowding +
-                House.Crowding.Squared +
-                Coping.Strategies.Basic.Food.Needs+Coping.Strategies.Basic.Food.Needs.Squared +
-                Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian +
-                Saving.Per.Family.Member +
-                Debt.To.Expenditure+Income.Per.Capita +
-                Income.Per.Capita.Squared +
-                Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. +
-                Family.Size.All.File.Numbers.Squared + 
-                Payment.Type.of.occupancy..For.rent +
-                Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash,
-            data=outlier)
+                     House.Crowding +
+                     House.Crowding.Squared +
+                     Coping.Strategies.Basic.Food.Needs+Coping.Strategies.Basic.Food.Needs.Squared +
+                     Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian +
+                     Saving.Per.Family.Member +
+                     Debt.To.Expenditure+Income.Per.Capita +
+                     Income.Per.Capita.Squared +
+                     Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. +
+                     Family.Size.All.File.Numbers.Squared +
+                     Payment.Type.of.occupancy..For.rent +
+                     Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash,
+                   data=outlier)
 summary(regoutlier2)
 regoutlier2.summary.coeff <- as.data.frame(summary(regoutlier2)$coefficients[, 1:4])
 
@@ -284,41 +167,41 @@ regoutlier2.summary.coeff <- as.data.frame(summary(regoutlier2)$coefficients[, 1
 #Probit: 7 Variables:
 Poor<- ifelse( Expenditure.Per.Capita<=50, 1, 0)
 Y <- cbind(Poor)
-X <- cbind( hve4$House.Crowding, 
-            hve4$House.Crowding.Squared, 
-            hve4$Coping.Strategies.Basic.Food.Needs, 
-            hve4$Coping.Strategies.Basic.Food.Needs.Squared, 
-            hve4$Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian, 
-            hve4$Saving.Per.Family.Member, 
-            hve4$Debt.To.Expenditure, 
-            hve4$Income.Per.Capita, 
-            hve4$Income.Per.Capita.Squared, 
-            hve4$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.., 
+X <- cbind( hve4$House.Crowding,
+            hve4$House.Crowding.Squared,
+            hve4$Coping.Strategies.Basic.Food.Needs,
+            hve4$Coping.Strategies.Basic.Food.Needs.Squared,
+            hve4$Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian,
+            hve4$Saving.Per.Family.Member,
+            hve4$Debt.To.Expenditure,
+            hve4$Income.Per.Capita,
+            hve4$Income.Per.Capita.Squared,
+            hve4$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..,
             hve4$Family.Size.All.File.Numbers.Squared
-            )
+)
 
 probit <- glm(Y~X, family=binomial (link="probit"), data=outlier)
 
 summary(probit)
 
-table(true = Y, pred = round(fitted(probit)))  
+table(true = Y, pred = round(fitted(probit)))
 
 #Probit: 9 Variables:
 Y <- cbind(Poor)
-X <- cbind(House.Crowding, 
-           House.Crowding.Squared, 
-           Coping.Strategies.Basic.Food.Needs, 
-           Coping.Strategies.Basic.Food.Needs.Squared, 
-           hve3$Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian, 
-           Saving.Per.Family.Member, 
-           Debt.To.Expenditure, 
-           Income.Per.Capita, 
-           Income.Per.Capita.Squared, 
-           hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.., 
-           Family.Size.All.File.Numbers.Squared, 
-           Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash, 
+X <- cbind(House.Crowding,
+           House.Crowding.Squared,
+           Coping.Strategies.Basic.Food.Needs,
+           Coping.Strategies.Basic.Food.Needs.Squared,
+           hve3$Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian,
+           Saving.Per.Family.Member,
+           Debt.To.Expenditure,
+           Income.Per.Capita,
+           Income.Per.Capita.Squared,
+           hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..,
+           Family.Size.All.File.Numbers.Squared,
+           Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash,
            Payment.Type.of.occupancy..For.rent
-           )
+)
 
 probit2 <- glm(Y~X, family=binomial (link="probit"), data=outlier)
 summary(probit2)
@@ -332,18 +215,18 @@ table(true = Y, pred = round(fitted(probit2)))
 #Logit: 7 Variables:
 Y <- cbind(Poor)
 X <- cbind(
-             House.Crowding, 
-             House.Crowding.Squared, 
-             Coping.Strategies.Basic.Food.Needs, 
-             Coping.Strategies.Basic.Food.Needs.Squared, 
-             hve3$Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian, 
-             Saving.Per.Family.Member, 
-             Debt.To.Expenditure, 
-             Income.Per.Capita, 
-             Income.Per.Capita.Squared, 
-             hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.., 
-             Family.Size.All.File.Numbers.Squared, 
-           data=outlier)
+  House.Crowding,
+  House.Crowding.Squared,
+  Coping.Strategies.Basic.Food.Needs,
+  Coping.Strategies.Basic.Food.Needs.Squared,
+  hve3$Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian,
+  Saving.Per.Family.Member,
+  Debt.To.Expenditure,
+  Income.Per.Capita,
+  Income.Per.Capita.Squared,
+  hve3$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..,
+  Family.Size.All.File.Numbers.Squared,
+  data=outlier)
 
 logit<-glm(Poor~
              House.Crowding +
@@ -355,35 +238,35 @@ logit<-glm(Poor~
              Income.Per.Capita +
              Income.Per.Capita.Squared +
              Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. +
-             Family.Size.All.File.Numbers.Squared, 
+             Family.Size.All.File.Numbers.Squared,
            family=binomial (link="logit"), data=outlier)
 summary(logit)
-table(true = Y, pred = round(fitted(logit)))  
+table(true = Y, pred = round(fitted(logit)))
 
 #Probit: 9 Variables:
 Y <- cbind(Poor)
 X <- cbind(
-               House.Crowding, 
-               House.Crowding.Squared, 
-               Coping.Strategies.Basic.Food.Needs, 
-               Coping.Strategies.Basic.Food.Needs.Squared, 
-               Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian, 
-               Saving.Per.Family.Member, 
-               Debt.To.Expenditure, 
-               Income.Per.Capita, 
-               Income.Per.Capita.Squared, 
-               Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.., 
-               Family.Size.All.File.Numbers.Squared, 
-               Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash, 
-               Payment.Type.of.occupancy..For.rent, 
-          data=outlier)
+  House.Crowding,
+  House.Crowding.Squared,
+  Coping.Strategies.Basic.Food.Needs,
+  Coping.Strategies.Basic.Food.Needs.Squared,
+  Poverty.and.Coping.Strategies.What.are.the.coping.strategies.that.you.used.in.the.last.six.months..Select.all.that.apply.....Living.together.with.host.family..Jordanian.and.Syrian,
+  Saving.Per.Family.Member,
+  Debt.To.Expenditure,
+  Income.Per.Capita,
+  Income.Per.Capita.Squared,
+  Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..,
+  Family.Size.All.File.Numbers.Squared,
+  Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash,
+  Payment.Type.of.occupancy..For.rent,
+  data=outlier)
 logit2<-glm(Y~X, family=binomial (link="logit"), data=outlier)
 summary(logit2)
 table(true = Y, pred = round(fitted(logit2)))
 
 
 ##### Wordlbank model
-## This model 
+## This model
 
 welfaremodel <- lm(ln.exppc~
                      case.size.vaf +
@@ -451,7 +334,7 @@ welfaremodel <- lm(ln.exppc~
 
 welfaremodel.summary.coeff <- as.data.frame(summary(welfaremodel)$coefficients[, 1:4])
 
-homevisit$predictedwellfare.modelregfull <- ( 
+homevisit$predictedwellfare.modelregfull <- (
   
   homevisit$case.size.vaf * welfaremodel.summary.coeff[2,1]) +
   (homevisit$case.size.vaf.sq * welfaremodel.summary.coeff[3,1]) +
@@ -515,4 +398,4 @@ homevisit$predictedwellfare.modelregfull <- (
   ( homevisit$all.case.size.sq  * welfaremodel.summary.coeff[57,1]) +
   ( homevisit$arr.crosspoint.grp1  * welfaremodel.summary.coeff[58,1]) +
   ( homevisit$arr.crosspoint.grp2  * welfaremodel.summary.coeff[59,1]) +
-  ( homevisit$arr.crosspoint.grp3  * welfaremodel.summary.coeff[60,1]) 
+  ( homevisit$arr.crosspoint.grp3  * welfaremodel.summary.coeff[60,1])

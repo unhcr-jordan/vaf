@@ -1,13 +1,15 @@
 
 ##########################################################################
 #### Import data & Rename variable
-source("code/import_clean_rename_homevisit3.R")
+source("code/2_Welfare-model.R")
 
 
 
 require(maptools) ## Create maps
 require(rgdal) ## Open geographic files
 require(rgeos)
+
+require("hexbin")
 
 
 ###############################################################
@@ -19,17 +21,22 @@ coords <- cbind(datasp1$long, datasp1$lat)
 datasp <- SpatialPointsDataFrame(coords, data= datasp1, proj4string=CRS("+proj=longlat"))
 plot(datasp)
 
+###############################################################
+### Getting a google map background
+##############################################################
+
+require("ggmap")
+googleterrain <- get_map(location = c(lon =37.22, lat = 31.32),
+                         color = "color", source = "google",maptype = "terrain", zoom = 7)
+googleeterrain <- ggmap(googleterrain)
+
+
 
 
 ###############################################################
 ### Simple Map Overlay in gplot2
 ##############################################################
-require("ggmap")
 
-
-googleterrain <- get_map(location = c(lon =37.22, lat = 31.32),
-                         color = "color", source = "google",maptype = "terrain", zoom = 7)
-googleeterrain <- ggmap(googleterrain)
 
 rm(map1)
 map1 <- googleeterrain
@@ -42,15 +49,14 @@ ggsave("out/map1.png", map1, width=8, height=6,units="in", dpi=300)
 rm(map1)
 
 ###############################################################
-### Hebin Map Overlay in gplot2
+### Hebin Map Overlay in gplot2 -- Plotting Family Size
 ##############################################################
 
-homevisit.familysize <-homevisit3[!rowSums(is.na(homevisit3["Household.information.Family.Size"])), ]
-require("hexbin")
-rm(map2)
-map2 <- googleeterrain
-map2 <- map2+
-  stat_summary_hex(aes(x= homevisit.familysize$long,  y= homevisit.familysize$lat, z = homevisit.familysize$Household.information.Family.Size ), alpha = 7/10)+
+
+rm(map.familysize.all)
+map.familysize.all <- googleeterrain
+map.familysize.all <- map.familysize.all +
+  stat_summary_hex(aes(x= hve$long,  y= hve$lat, z = hve$Household.information.Family.Size ), alpha = 7/10)+
   #coord_equal() +
   theme_bw() + 
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
@@ -58,10 +64,57 @@ map2 <- map2+
   ggtitle("Home Visit Analysis ")
 
 # Save this!
-ggsave("out/map2.png", map2, width=8, height=6,units="in", dpi=300)
+ggsave("out/map-familysize-all.png", map.familysize.all, width=8, height=6,units="in", dpi=300)
 
-rm(homevisit.familysize)
-rm(map2)
+rm(map.familysize.all)
+
+
+
+###############################################################
+### Hebin Map Overlay in gplot2 -- Plotting Severe Welfare score from v3
+##############################################################
+
+rm(hve.severe.v3)
+hve.severe.v3 <-hve[ hve$predictedwellfare.vw5.v3.class == "Severe", ]
+
+rm(map.severe.v3)
+map.severe.v3 <- googleeterrain
+map.severe.v3 <- map.severe.v3 +
+  stat_summary_hex(aes(x= hve.severe.v3$long,  y= hve.severe.v3$lat, z = hve.severe.v3$Household.information.Family.Size ),
+                   alpha = 7/10)+
+  #coord_equal() +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "Household.information.Family.Size for Severe welfare Cat") +
+  ggtitle("Home Visit Analysis ")
+
+# Save this!
+ggsave("out/map-severev3.png", map.severe.v3, width=8, height=6,units="in", dpi=300)
+
+rm(map.severe.v3)
+rm(hve.severe.v3)
+
+###############################################################
+### Hebin Map Overlay in gplot2 -- Plotting Severe Welfare score from v4
+##############################################################
+hve.severe.v4 <-hve[ hve$predictedwellfare.vw5.v4.class == "Severe", ]
+
+rm(map.severe.v4)
+map.severe.v4 <- googleeterrain
+map.severe.v4 <- map.severe.v4 +
+  stat_summary_hex(aes(x= hve.severe.v4$long,  y= hve.severe.v4$lat, z = hve.severe.v4$Household.information.Family.Size ),
+                   alpha = 7/10)+
+  #coord_equal() +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "Household.information.Family.Size for Severe welfare Cat") +
+  ggtitle("Home Visit Analysis ")
+
+# Save this!
+ggsave("out/map-severev4.png", map.severe.v4, width=8, height=6,units="in", dpi=300)
+
+rm(map.severe.v4)
+rm(hve.severe.v4)
 
 ###############################################################
 ### Graph example with gplot2

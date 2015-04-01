@@ -18,7 +18,7 @@ label.v3 <- read.csv("data/homevisit3_label.csv", na.strings="", stringsAsFactor
 
 ## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
 names(homevisit.v3) <- label.v3[, 3]
-rm(label.v3)
+#rm(label.v3)
 
 # 
 #str(homevisit)
@@ -40,18 +40,18 @@ names(homevisit.v4) <- label.v4[, 9]
 ## Removing variables that are not in common so that we can bind dataset
 #names(label.v4)
 label.onlyv3 <- label.v4[ (label.v4$onlyv3=="yes"),9 ]
-homevisit.v3 <-homevisit.v3[,!(names(homevisit.v3) %in% label.onlyv3)]
-homevisit.v3$dataset <- "homevisit3"
+homevisit.v3.r <-homevisit.v3[,!(names(homevisit.v3) %in% label.onlyv3)]
+homevisit.v3.r$dataset <- "homevisit3"
 
 label.onlyv4 <- label.v4[ (label.v4$onlyv4=="yes"),9 ]
-homevisit.v4 <-homevisit.v4[,!(names(homevisit.v4) %in% label.onlyv4)]
-homevisit.v4$dataset <- "homevisit4"
+homevisit.v4.r <-homevisit.v4[,!(names(homevisit.v4) %in% label.onlyv4)]
+homevisit.v4.r$dataset <- "homevisit4"
 
-rm(label.v4)
-rm(label.onlyv3)
-rm(label.onlyv4)
+# rm(label.v4)
+# rm(label.onlyv3)
+# rm(label.onlyv4)
 
-homevisit <- rbind(homevisit.v4, homevisit.v3)
+homevisit <- rbind(homevisit.v4.r, homevisit.v3.r)
 
 ## Remark for analysis in stata variables names shoudl be less 32 characters -- might need to rename a second time
 
@@ -96,6 +96,8 @@ correct <- datasp1@data[ ,c("id","district_c","district","Gov_NAME","Gov_code" )
 homevisit$id <- rownames(homevisit)
 homevisit <- merge(x=homevisit, y=correct, by="id")
 rm(correct)
+
+## Let's create distinc variables for each records on gov
 
 
 ######################################################

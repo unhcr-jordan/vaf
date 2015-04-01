@@ -8,9 +8,6 @@
 ## The export has two line of header so we need to skip the first one
 homevisit.v3 <- read.csv("data/Home_visit_version3.csv", skip=1)
 
-
-
-################################################################
 #### Rename variables 
 ## Label are not easily legible
 ## Labels have been manually reviewed -- elimination special characters such / or ? or - 
@@ -23,7 +20,6 @@ label.v3 <- read.csv("data/homevisit3_label.csv", na.strings="", stringsAsFactor
 names(homevisit.v3) <- label.v3[, 3]
 rm(label.v3)
 
-homevisit <- homevisit.v3
 # 
 #str(homevisit)
 
@@ -36,8 +32,28 @@ label.v4 <- read.delim("data/homevisit4_label.tsv", stringsAsFactors=FALSE)
 ## Remove the lines from the dictionnary that are not in v4
 label.v4 <- label.v4[ (label.v4$v4=="yes"), ]
 names(homevisit.v4) <- label.v4[, 9]
+
+
+############################################
+#### Appending the 2 dataset
+
+## Removing variables that are not in common so that we can bind dataset
+#names(label.v4)
+label.onlyv3 <- label.v4[ (label.v4$onlyv3=="yes"),9 ]
+homevisit.v3 <-homevisit.v3[,!(names(homevisit.v3) %in% label.onlyv3)]
+homevisit.v3$dataset <- "homevisit3"
+
+label.onlyv4 <- label.v4[ (label.v4$onlyv4=="yes"),9 ]
+homevisit.v4 <-homevisit.v4[,!(names(homevisit.v4) %in% label.onlyv4)]
+homevisit.v4$dataset <- "homevisit4"
+
 rm(label.v4)
-homevisit <- homevisit.v4
+rm(label.onlyv3)
+rm(label.onlyv4)
+
+homevisit <- rbind(homevisit.v4, homevisit.v3)
+
+## Remark for analysis in stata variables names shoudl be less 32 characters -- might need to rename a second time
 
 ################################################################
 ####  extracting coordinates from dataset
@@ -52,6 +68,34 @@ homevisit <-homevisit[!rowSums(is.na(homevisit["lat"])), ]
 homevisit <-homevisit[!rowSums(is.na(homevisit["long"])), ]
 
 # str(homevisit)
+
+
+####### Recover correct Governorate & district using the coordinates
+source("code/geo.R")
+
+### Spatial join on district 
+## getting correct district and gov from coordinates
+districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
+
+## Create a spatial data frame with vaf records
+rm(datasp)
+datasp <-homevisit[ , c("long", "lat")]
+#3ploting for a quick check
+##plot(datasp)
+coords <- cbind(datasp$long, datasp$lat)
+datasp0 <- SpatialPointsDataFrame(coords, data= datasp, proj4string=CRS("+proj=longlat"))
+
+plot(datasp0)
+
+## Intersection of points with district 
+datasp1 <- IntersectPtWithPoly(datasp0, districtgeo)
+datasp1@data$id <- rownames(datasp1@data)
+rm(correct)
+#View(districtgeo@data)
+correct <- datasp1@data[ ,c("id","district_c","district","Gov_NAME","Gov_code" )]
+homevisit$id <- rownames(homevisit)
+homevisit <- merge(x=homevisit, y=correct, by="id")
+rm(correct)
 
 
 ######################################################

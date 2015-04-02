@@ -1,6 +1,6 @@
 ##########################################################################
 #### Import data & Rename variable
-source("code/1_composite_variable_homevisit.R")
+#source("code/1_composite_variable_homevisit.R")
 
 
 
@@ -30,8 +30,11 @@ library(plyr)
 ######### First step subset the dataframe in order to keep the column that make snese for the regression.
 
 hve.model <- hve
+#names(hve.model)
 
-
+hve.model3 <-hve[ hve$dataset == "homevisit3",  ]
+hve.model4 <-hve[ hve$dataset == "homevisit4",  ]
+summary(hve.model4$Family.Size)
 ##########################################################################
 #REGRESSION MODELS:
 ##########################################################################
@@ -49,7 +52,7 @@ vw5.v3 <- lm(Expenditure.Per.Capita ~
             Family.Size.Squared +
             Spices.And.Condiments.Bought.With.Cash +
             Rent.Occupancy,
-          data=hve[ hve$dataset == "homevisit3",  ]
+          data=hve.model3
 )
 #summary(vw5)
 vw5.v3.summary.coeff <- as.data.frame(summary(vw5.v3)$coefficients[, 1:4])
@@ -65,9 +68,13 @@ hve$predictedwellfare.vw5.v3 <- ( hve$Debt.To.Expenditure * vw5.v3.summary.coeff
   ( hve$Family.Size.Squared * vw5.v3.summary.coeff[8,1]) +
   ( hve$Spices.And.Condiments.Bought.With.Cash * vw5.v3.summary.coeff[9,1]) +
   ( hve$Rent.Occupancy* vw5.v3.summary.coeff[10,1])
-#View(hve$predictedwellfare.vw5.v3)
+
+summary(hve$predictedwellfare.vw5.v3)
+hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue",
+     main = "Histogram of Welfare Model -vw5- estimated on V3 dataset", xlab = "Expected welfare Score ")
+
 ## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
-hve$predictedwellfare.vw5.v3.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v3, n = 4, style = "fixed", fixedBreaks = c(-10000, 28, 68 , 100))))
+hve$predictedwellfare.vw5.v3.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v3, n = 4, style = "fixed", fixedBreaks = c(-105, 28, 68 , 100, 1000))))
 hve$predictedwellfare.vw5.v3.class <- revalue(hve$predictedwellfare.vw5.v3.class, c(`1` = "Severe", `2` = "High", `3` = "Moderate", `4` = "Low"))
 hve$predictedwellfare.vw5.v3.class  <- factor(hve$predictedwellfare.vw5.v3.class, levels = c("Severe", "High", "Moderate", "Low"))
 View(hve$predictedwellfare.vw5.v3.class)
@@ -85,7 +92,7 @@ vw5.v4 <- lm(Expenditure.Per.Capita ~
                Family.Size.Squared +
                Spices.And.Condiments.Bought.With.Cash +
                Rent.Occupancy,
-             data=hve[ hve$dataset == "homevisit4",  ]
+             data=hve.model4
 )
 #summary(vw5)
 vw5.v4.summary.coeff <- as.data.frame(summary(vw5.v4)$coefficients[, 1:4])
@@ -99,6 +106,11 @@ hve$predictedwellfare.vw5.v4 <- ( hve$Debt.To.Expenditure * vw5.v4.summary.coeff
   ( hve$Family.Size.Squared * vw5.v4.summary.coeff[8,1]) +
   ( hve$Spices.And.Condiments.Bought.With.Cash * vw5.v4.summary.coeff[9,1]) +
   ( hve$Rent.Occupancy* vw5.v4.summary.coeff[10,1])
+
+summary(hve$predictedwellfare.vw5.v4)
+hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue",
+     main = "Histogram of Welfare Model -vw5- estimated on V3 dataset", xlab = "Expected welfare Score ")
+
 #View(hve$predictedwellfare.vw5.v3)
 ## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
 hve$predictedwellfare.vw5.v4.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v4 , n = 4, style = "fixed", fixedBreaks = c(-10000, 28, 68 , 100))))

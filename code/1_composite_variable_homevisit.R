@@ -14,7 +14,7 @@ source("code/0_import_clean_rename_homevisit3.R")
 ##########################################################################
 #DATA CLEANING:
 ##########################################################################
-
+rm(hve)
 hve <- homevisit
 
 
@@ -62,11 +62,16 @@ hve$Debt.To.Income <- ( as.numeric (hve$Poverty.and.Coping.Strategies.What.is.yo
 
 #Family Size Squared:
 hve$Family.Size <- as.numeric(hve$Household.information.Family.Size)
-hve$Family.Size.Squared <- as.numeric(hve$Household.information.Family.Size)^2
+hve$Family.Size.Squared <- as.numeric(hve$Household.information.Family.Size) ^ 2
+
+#summary(hve$Family.Size)
 
 ## Renamed to Home visit Case size squarred
-hve$case.size.vaf <- hve$Household.information.Family.Size
-hve$case.size.vaf.sq <- hve$case.size.vaf.sq ^2
+
+#summary(hve$Household.information.Family.Size)
+hve$case.size.vaf <- as.numeric(hve$Household.information.Family.Size)
+hve$case.size.vaf.sq <- as.numeric(hve$case.size.vaf) ^ 2
+#summary(hve$case.size.vaf)
 
 #View(hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)
 hve$Family.Size.All.File.Numbers.Squared <- (hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)^2
@@ -74,7 +79,7 @@ hve$Family.Size.All.File.Numbers.Squared <- (hve$Type.of.Housing.Number.of.famil
 
 
 #Coping Strategies to Meet Basic Food Needs:
-hve$Coping.Strategies.Basic.Food.Needs <- (  hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Spent.savings.Yes +
+hve$Coping.Strategies.Basic.Food.Needs <- (   hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Spent.savings.Yes +
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Spent.savings.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore + 
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Bought.food.on.credit.or.borrowed.money.to.purchase.food.Yes +
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Bought.food.on.credit.or.borrowed.money.to.purchase.food.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore +
@@ -83,11 +88,11 @@ hve$Coping.Strategies.Basic.Food.Needs <- (  hve$In.the.past.30.days..has.your.f
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sell.household.goods..jewelry..phone..furniture..electro.domestics..etc..Yes +
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sell.household.goods..jewelry..phone..furniture..electro.domestics..etc..No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore +
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sell.productive.assets.or.means.of.transport..sewing.machine..car..wheel.barrow..bicycle..motorbike..etc..Yes +
-                                              hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sell.productive.assets.or.means.of.transport..sewing.machine..car..wheel.barrow..bicycle..motorbike..etc..No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore +
+                                              hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sell.productive.assets.or.means.of.transport..sewing.machine..car..wheel.barrow..bicycle..motorbike..etc..No..exhausted.this.strategy +
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Since.arriving.in.Jordan..have.you.accepted.high.risk..illegal..socially.degrading.or.exploitive.temporary.jobs.Yes +
-                                              hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Since.arriving.in.Jordan..have.you.accepted.high.risk..illegal..socially.degrading.or.exploitive.temporary.jobs.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore + 
+                                              hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Since.arriving.in.Jordan..have.you.accepted.high.risk..illegal..socially.degrading.or.exploitive.temporary.jobs.No..exhausted.this.strategy + 
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sent.adult.family.members.to.beg.Yes + 
-                                              hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sent.adult.family.members.to.beg.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore + 
+                                              hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sent.adult.family.members.to.beg.No..exhausted.this.strategy + 
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sent.children..under.18..family.members.to.beg.Yes +
                                               hve$In.the.past.30.days..has.your.family.applied.any.of.the.below.strategies.to.meet.basic.food.needs...Sent.children..under.18..family.members.to.beg.No..because.I.have.exhausted.this.strategy.already.and.cannot.do.it.anymore
                                               )
@@ -113,8 +118,6 @@ hve$Coping.Strategies.Used.Last.Six.Months <- (  hve$Poverty.and.Coping.Strategi
                                                   )
 hve$Coping.Strategies.Used.Last.Six.Months.Squared <- (hve$Coping.Strategies.Used.Last.Six.Months)^2
 
-
-
 #House Assets:
 hve$House.Assets <- (hve$Type.of.Housing.Access.to.kitchen..Yes +
                       hve$Type.of.Housing.Access.to.sanitary.facilities..Yes +
@@ -136,10 +139,13 @@ hve$House.Poor.Conditions <- (  hve$Type.of.Housing.Please.specify.if.any.of.the
 #NO: hpcfs<-(House.Poor.Conditions/hve$Household.information.Family.Size) #NO
 
 #Chronic Diseases in Family:
-hve$Chronic.Diseases <- (  hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Hypertension +
+
+summary(hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Critical.medical.condition..life..threatening..)
+
+hve$Chronic.Diseases <- (   hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Hypertension +
                             hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Diabetes +
                             hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Cardiovascular +
-                            hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Critical.medical.condition..life..threatening.. +
+                          #  hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Critical.medical.condition..life..threatening.. +
                             hve$Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases.If.yes..specify...Other..specify
                             )
 #NO: cdfs<-(Chronic.Diseases/hve$Household.information.Family.Size) #ok
@@ -160,7 +166,7 @@ hve$Disability.In.Family <- (  hve$Age.and.Disability.details.Age...0..17.years.
 
 #House Luxury Assets:
 #names(hve)
-hve$House.Luxury.Assets <- (  hve$Type.of.Housing.Assets...Floor.mattress +
+hve$House.Luxury.Assets <- (   hve$Type.of.Housing.Assets...Floor.mattress +
                                hve$Type.of.Housing.Assets...Sofa.set +
                                hve$Type.of.Housing.Assets...Kitchen.utilities + 
                                hve$Type.of.Housing.Assets...Computer +
@@ -214,7 +220,7 @@ hve$Age.Related.Disability <- (  hve$Age.and.Disability.Are.your.family.members.
                                   hve$Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Chronically.ill.or.serious.medical.condition +
                                   hve$Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Other.people.in.need.of.support.to.do.daily.activities
                                   )
-hve$Age.Related.Disability.Per.Capita <- (Age.Related.Disability/hve$Household.information.Family.Size)
+hve$Age.Related.Disability.Per.Capita <- ( hve$Age.Related.Disability / as.numeric(hve$Household.information.Family.Size))
 
 
 
@@ -227,8 +233,7 @@ hve$Debt.To.Expenditure <- (as.numeric(hve$Poverty.and.Coping.Strategies.What.is
 hve$Debt.Per.Capita <- (as.numeric(hve$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now..This.should.include.not.paying.the.rent..etc) /
                            hve$Household.information.Family.Size)
 
-# Family Size
-hve$Family.Size.Squared <- (as.numeric(hve$Household.information.Family.Size))^2
+
 
 # Rent occupancy:
 hve$Rent.Occupancy <- ifelse(hve$Payment.Type.of.occupancy..For.rent == "1", 1, 0) 
@@ -255,5 +260,5 @@ hve$Spices.And.Condiments.Bought.With.Cash <- ifelse(hve$Over.the.last.7.days..h
 
 
 
-
+write.csv(hve, file="out/hve.csv")
 

@@ -30,8 +30,8 @@ names(homevisit.v3) <- label.v3[, 3]
 homevisit.v4 <- read.csv("data/Home_visit_4.csv", skip=1)
 label.v4 <- read.delim("data/homevisit4_label.tsv", stringsAsFactors=FALSE)
 ## Remove the lines from the dictionnary that are not in v4
-label.v4 <- label.v4[ (label.v4$v4=="yes"), ]
-names(homevisit.v4) <- label.v4[, 9]
+label.v4.only <- label.v4[ (label.v4$v4=="yes"), ]
+names(homevisit.v4) <- label.v4.only[, 9]
 
 
 ############################################
@@ -67,6 +67,11 @@ homevisit$long <- as.numeric(substr( homevisit$geo, 15,27))
 homevisit <-homevisit[!rowSums(is.na(homevisit["lat"])), ]
 homevisit <-homevisit[!rowSums(is.na(homevisit["long"])), ]
 
+### Eliminate record with obviously wrong coordinates
+homevisit <-homevisit[(homevisit["lat"] <=  34), ]
+homevisit <-homevisit[(homevisit["lat"] >= 29), ]
+homevisit <-homevisit[(homevisit["long"] <= 40 ), ]
+homevisit <-homevisit[(homevisit["long"] >= 34 ), ]
 # str(homevisit)
 
 
@@ -75,7 +80,7 @@ source("code/geo.R")
 
 ### Spatial join on district 
 ## getting correct district and gov from coordinates
-districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
+districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
 
 ## Create a spatial data frame with vaf records
 rm(datasp)
@@ -108,10 +113,13 @@ homevisit[is.na(homevisit)]<-0
 
 
 ############## incorrect family size, incorrect number of rooms)
-#Eliminate Rows with Family Size is = 0 and Family Size is >= 20 (Total of 10 records present of family size of 0, 500 and 5000):
+#Eliminate Rows with Family Size is NA, 0 or >= 20 
 homevisit$Household.information.Family.Size <- as.numeric(homevisit$Household.information.Family.Size)
+
 homevisit <- homevisit [!(homevisit$Household.information.Family.Size==0),]
 homevisit <- homevisit [!(homevisit$Household.information.Family.Size >= 20),]
+homevisit <- homevisit [! is.na(homevisit$Household.information.Family.Size),]
+
 #View(homevisit)
 
 

@@ -75,8 +75,8 @@ rm(map.familysize.all)
 ##############################################################
 
 rm(hve.severe.v3)
-hve.severe.v3 <-hve[ hve$predictedwellfare.vw5.v3.class == "Severe", ]
-
+hve.severe.v3 <- hve[ which(hve$predictedwellfare.vw5.v3.class == "Severe"), ]
+View(hve.severe.v3)
 rm(map.severe.v3)
 map.severe.v3 <- googleeterrain
 map.severe.v3 <- map.severe.v3 +
@@ -97,7 +97,7 @@ rm(hve.severe.v3)
 ###############################################################
 ### Hebin Map Overlay in gplot2 -- Plotting Severe Welfare score from v4
 ##############################################################
-hve.severe.v4 <-hve[ hve$predictedwellfare.vw5.v4.class == "Severe", ]
+hve.severe.v4 <-hve[ with(hve$predictedwellfare.vw5.v4.class == "Severe"), ]
 
 rm(map.severe.v4)
 map.severe.v4 <- googleeterrain

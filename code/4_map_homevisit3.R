@@ -15,7 +15,7 @@ require(ggplot2)
 ### Plotting map with mapbox background https://github.com/milafrerichs/plotmapbox
 #library(devtools)
 #install_github( "milafrerichs/plotmapbox")
-require(plotmapbox)
+#require(plotmapbox)
 
 
 ###############################################################
@@ -49,6 +49,28 @@ stamenet <- ggmap(stamen)
 #mapbox <- getmapbox_map(center = c(lng = 37.22, lat = 31.32),  mapbox = "unhcr.map-ohec27wu", zoom = 8, size = 640, filename = "map.png")
 #mapboxback <- map_png(mapbox)
 
+########################################
+### Simple map background with governorate
+
+jor_adm1 <- readOGR("geo/admin1.geojson", "OGRGeoJSON")
+#plot(jor_adm1)
+# Fortify them
+jor_adm1@data$id = rownames(jor_adm1@data)
+rm(jor_adm1_f)
+jor_adm1_f <- fortify(jor_adm1, region="id")
+jor_adm1_f <-join(jor_adm1_f, jor_adm1@data, by="id")
+
+rm(maplevel1)
+maplevel1 <-  ggplot(jor_adm1_f, aes(long, lat)) + 
+  coord_equal() +
+  geom_polygon(data = jor_adm1_f, aes(x = long, y = lat, group = group), alpha = 0.5) +
+ # geom_text(aes(label = short, x = Longitude_c, y = Latitude_c, group = group)) + #add labels at centroids
+  geom_path(data = jor_adm1_f, aes(x = long, y = lat, group = group), color="white")+
+  ggtitle("Governorates of Jordan") +
+  theme_bw()
+ggsave("out/maplevel1.png", maplevel1, width=8, height=6,units="in", dpi=300)
+
+
 ###############################################################
 ### Simple Map Overlay in gplot2
 ##############################################################
@@ -58,7 +80,7 @@ map_obs <- map_obs +
   geom_point(aes(x = long, y = lat), data=hve, color="#006ec7", # UN Blue...
              size=1, alpha = 1/10)+
   labs(x = "Longitude", y = "Latitude") +
-  ggtitle("Home Visit")+
+  ggtitle("Home Visit") +
   theme_bw()
 ggsave("out/map_obs.png", map_obs, width=8, height=6,units="in", dpi=300)
 rm(map_obs)
@@ -158,6 +180,98 @@ map.exp.low <- map.exp.low +
 ggsave("out/map-exp-4low.png", map.exp.low, width=8, height=6,units="in", dpi=300)
 rm(map.exp.low)
 rm(hve.exp.low)
+
+
+### Mapping type of housing
+#Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Permanent.Shelter..structurally.durable.sound.building.with.permanent.materials..cement..
+#Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Transitional.Shelter..caravan..mud.hut..tin.or.wood.structure..scrap.material..
+#Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Temporary..emergency.shelter..tent..
+
+#View(hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Permanent.Shelter..structurally.durable.sound.building.with.permanent.materials..cement..)
+
+rm(hve.permanent.shelter)
+hve.permanent.shelter <- hve[(hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Permanent.Shelter..structurally.durable.sound.building.with.permanent.materials..cement.. == 1), ]
+rm(map.permanent.shelter)
+map.permanent.shelter <- googleeroad
+map.permanent.shelter <- map.permanent.shelter +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve.permanent.shelter, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- permanent.shelter ")
+ggsave("out/map-permanent-shelter.png", map.permanent.shelter, width=8, height=6,units="in", dpi=300)
+rm(map.permanent.shelter.n)
+map.permanent.shelter.n <- northeroad
+map.permanent.shelter.n <- map.permanent.shelter.n +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve.permanent.shelter, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- permanent.shelter ")
+ggsave("out/map-permanent-shelter-north.png", map.permanent.shelter.n, width=8, height=6,units="in", dpi=300)
+rm(map.permanent.shelter.n)
+
+rm(hve.permanent.shelter)
+
+rm(hve.transitional.shelter)
+hve.transitional.shelter <- hve[(hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Transitional.Shelter..caravan..mud.hut..tin.or.wood.structure..scrap.material.. == 1), ]
+rm(map.transitional.shelter)
+map.transitional.shelter <- googleeroad
+map.transitional.shelter <- map.transitional.shelter +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve.transitional.shelter, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "Low - # of Ind ") +
+  ggtitle("Home Visit Analysis- transitional.shelter ")
+ggsave("out/map-transitional-shelter.png", map.transitional.shelter, width=8, height=6,units="in", dpi=300)
+rm(map.transitional.shelter)
+
+rm(map.transitional.shelter.n)
+map.transitional.shelter.n <- northeroad
+map.transitional.shelter.n <- map.transitional.shelter.n +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve.transitional.shelter, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- transitional.shelter ")
+ggsave("out/map-transitional-shelter-north.png", map.transitional.shelter.n, width=8, height=6,units="in", dpi=300)
+rm(map.transitional.shelter.n)
+rm(hve.transitional.shelter)
+
+rm(hve.temporary.shelter)
+hve.temporary.shelter <- hve[(hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Temporary..emergency.shelter..tent.. == 1), ]
+rm(map.temporary.shelter)
+map.temporary.shelter <- googleeroad
+map.temporary.shelter <- map.temporary.shelter +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve.temporary.shelter, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "Low - # of Ind ") +
+  ggtitle("Home Visit Analysis- temporary.shelter ")
+ggsave("out/map-temporary-shelter.png", map.temporary.shelter, width=8, height=6,units="in", dpi=300)
+rm(map.temporary.shelter)
+rm(hve.temporary.shelter)
+
 
 
 #################################

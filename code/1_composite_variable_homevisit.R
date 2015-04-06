@@ -1,6 +1,6 @@
 ##########################################################################
 #### Import data & Rename variable
-source("code/0_import_clean_rename_homevisit3.R")
+#source("code/0_import_clean_rename_homevisit3.R")
 
 
 ##########################################################################
@@ -27,6 +27,12 @@ hve <- homevisit
 #Expenditure Per Capita:
 hve$Expenditure.Per.Capita <- (hve$Financial.Situation.Total.Expenditure / 
                                   hve$Household.information.Family.Size)
+
+## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
+hve$Expenditure.Per.Capita.class <- as.factor(findCols(classIntervals(hve$Expenditure.Per.Capita, n = 4, style = "fixed", fixedBreaks = c(-105, 28, 68 , 100, 1000))))
+hve$Expenditure.Per.Capita.class <- revalue(hve$Expenditure.Per.Capita.class, c(`1` = "Severe", `2` = "High", `3` = "Moderate", `4` = "Low"))
+hve$Expenditure.Per.Capita.class  <- factor(hve$Expenditure.Per.Capita.class, levels = c("Severe", "High", "Moderate", "Low"))
+
 
 ## Additionnal data cleaning
 hve <- hve [!(hve$Expenditure.Per.Capita == 0),]

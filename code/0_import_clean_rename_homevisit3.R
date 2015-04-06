@@ -31,6 +31,13 @@ homevisit.v4 <- read.csv("data/Home_visit_4.csv", skip=1)
 label.v4 <- read.delim("data/homevisit4_label.tsv", stringsAsFactors=FALSE)
 ## Remove the lines from the dictionnary that are not in v4
 label.v4.only <- label.v4[ (label.v4$v4=="yes"), ]
+
+## Checking that variables are well aligned
+#label.v4.test <- as.data.frame(names(homevisit.v4))
+
+#write.csv(label.v4.only, file="out/labelv4only.csv")
+#write.csv(label.v4.test, file="out/labelv4test.csv")
+
 names(homevisit.v4) <- label.v4.only[, 9]
 
 
@@ -52,6 +59,13 @@ homevisit.v4.r$dataset <- "homevisit4"
 # rm(label.onlyv4)
 
 homevisit <- rbind(homevisit.v4.r, homevisit.v3.r)
+
+### Remove records withtout dataset info --
+homevisit <- homevisit[!rowSums(is.na(homevisit["dataset"])), ]
+#hve.na <-hve[ is.na(homevisit$dataset),  ]
+
+
+
 
 ## Remark for analysis in stata variables names shoudl be less 32 characters -- might need to rename a second time
 
@@ -80,7 +94,10 @@ source("code/geo.R")
 
 ### Spatial join on district 
 ## getting correct district and gov from coordinates
-districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
+districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
+#districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
+
+names(districtgeo)
 
 ## Create a spatial data frame with vaf records
 rm(datasp)
@@ -90,16 +107,25 @@ datasp <-homevisit[ , c("long", "lat")]
 coords <- cbind(datasp$long, datasp$lat)
 datasp0 <- SpatialPointsDataFrame(coords, data= datasp, proj4string=CRS("+proj=longlat"))
 
-plot(datasp0)
+#plot(datasp0)
 
 ## Intersection of points with district 
 datasp1 <- IntersectPtWithPoly(datasp0, districtgeo)
 datasp1@data$id <- rownames(datasp1@data)
 rm(correct)
 #View(districtgeo@data)
+
 correct <- datasp1@data[ ,c("id","district_c","district","Gov_NAME","Gov_code" )]
+
+#correct <- datasp1@data[ ,c("gid","adm0_code" , "adm0_name"  , "adm1_name" , "adm1_code", "adm2_name_alt", 
+#                            "adm3_pop_2",    "adm3_name",    "adm3_code"  ,   "adm2_code" ,    "adm2_name"  ,
+#                            "poverty_ra"  ,  "population" ,   "no_of_poor",    "rattio" ,  "adm1_nam" ,    
+#                             "adm1_nam_alt",  "adm1_pro",      "adm2_nam",      "adm2_nam_alt",  "adm2_pro", 
+#                            "adm3_nam" ,     "adm3_pro" ,     "adm1_old"  ,  "adm2_old"  ,    "adm3_old"  ,
+#                            "adm1_ar" ,      "adm2_ar" ,      "adm3_ar"  ,     "level1_cap"  ,  "level2_cap" )]
 homevisit$id <- rownames(homevisit)
 homevisit <- merge(x=homevisit, y=correct, by="id")
+#homevisit <- merge(x=homevisit, y=correct, by.x="id", by.y="gid")
 rm(correct)
 
 ## Let's create distinc variables for each records on gov
@@ -118,7 +144,8 @@ homevisit$Household.information.Family.Size <- as.numeric(homevisit$Household.in
 
 homevisit <- homevisit [!(homevisit$Household.information.Family.Size==0),]
 homevisit <- homevisit [!(homevisit$Household.information.Family.Size >= 20),]
-homevisit <- homevisit [! is.na(homevisit$Household.information.Family.Size),]
+
+homevisit <- homevisit[!rowSums(is.na(homevisit["Household.information.Family.Size"])), ]
 
 #View(homevisit)
 

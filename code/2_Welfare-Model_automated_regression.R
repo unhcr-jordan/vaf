@@ -128,6 +128,49 @@ write.csv(hvAR, file = "out/hvAR.csv")
 head(hvAR, n=10)
 
 
+
+
+
+###########################################################
+########## All models
+
+#Welfare Model (1): without expenditure
+#Welfare model 1 is log-transformed, includes 9 different variables (quadratic terms are not new variables), has a sample size of 666 and excludes expenditure per capita as a dependent variable. Its R-squared stands at 49%.
+#ln_ExpenditurePerCapita= β_0+ β_1 HouseCrowding+ β_2 〖HouseCrowding〗^2+ β_3 CopingStrategies1+ β_4 CopingStrategiesFood+β_5 〖CopingStrategiesFood〗^2+ β_6 LivingWithHostFamily+β_7 ToiletSecurity+ β_8 Savings+β_9 DebtExpenditureRatio+ β_10 IncomePerCapita+β_11 〖IncomePerCapita〗^2+β_12 FamilySize
+
+
+#Welfare Model (2): with expenditure
+#Welfare model 2 is log-transformed, includes 7 different variables, has a sample size of 666 and includes expenditure per capita as a dependent variable. Its R-squared stands at 71%.
+#ln_ExpenditurePerCapita= β_0+ β_1 HouseCrowding+ β_2 〖HouseCrowding〗^2+ β_3 CopingStrategies1+ β_4 CopingStrategiesFood+β_5 〖CopingStrategiesFood〗^2+  β_6 DebtExpenditureRatio+ β_7 IncomePerCapita+β_8 〖IncomePerCapita〗^2+β_9 FamilySize β_10 ExpenditurePerCapita
+
+
+#Welfare Model (3): parsimonious with expenditure 
+#Welfare model 3 is the so-called “parsimonious model ”. It is a level model consisting of only 3 different variables, has a sample size of 666 and includes the natural log of expenditure per capita as its dependent variable. Its R-squared stands at 64%.
+#ExpenditurePerCapita= β_0+ β_1 IncomePerCapita+ β_2 〖IncomePerCapita〗^2+ β_3 FamilySize+ β_4 〖FamilySize 〗^2+β_5 lnExpenditurePerCapita+  
+  
+  
+#  Welfare Model (4): super parsimonious
+# Welfare model 4 is the simplest, yet a highly predictive model. It is a level model consisting of only 3 variables and no quadratic terms, it has a sample size of 666 and includes ln expenditure per capita as a dependent variable. Its R-squared stands at 60%. 
+# ExpenditurePerCapita= β_0+ β_1 IncomePerCapita+ β_2 FamilySize+ β_3 lnExpenditurePerCapita
+# Welfare Model (5): without expenditure 
+# Welfare model 5 is an exact replica of Welfare model 1 with the additional variable “number of working age people in household”. It is log-transformed, includes 10 different variables, has a sample size of 634 and excludes expenditure per capita as a dependent variable. Its R-squared is 50%.
+# ln_ExpenditurePerCapita= β_0+ β_1 HouseCrowding+ β_2 〖HouseCrowding〗^2+ β_3 CopingStrategies1+ β_4 CopingStrategiesFood+β_5 〖CopingStrategiesFood〗^2+ β_6 LivingWithHostFamily+β_7 ToiletSecurity+ β_8 Savings+β_9 DebtExpenditureRatio+ β_10 IncomePerCapita+β_11 〖IncomePerCapita〗^2+β_12 FamilySize + β_13 NumberWorkingAgePeople
+
+
+# Welfare Model (6): food security
+# Welfare model 6 is a preliminary non-monetary vulnerability predicting model. It is a level model, consisting of 10 variables, has a sample size of 666 and includes coping strategies used to meet basic food needs as a dependent variable. Its R-squared stands at 44%. 
+# FoodSecurityIndicator= β_0+ β_1 lnExpenditurePerCapita+ β_2 ConstructionWorker+ β_3 Hygiene+ β_4 YouthEnglishTrainingInterest+β_5 AsylumSeekerCertificate+ β_6 HostedForFree+β_7 StayWithoutWater+ β_8 HouseVentilation+β_9 NotAttendingSchoolDueToParentsDecision+ β_10 CopingStrategiesFood+β_11 〖CopingStraregiesFood〗^2
+
+
+
+
+
+
+
+
+
+
+
 #Preliminary Welfare Model 2:
 vw2 <- lm(  Expenditure.Per.Capita ~
               House.Crowding +

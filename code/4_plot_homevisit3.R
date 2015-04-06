@@ -1,7 +1,130 @@
 
 ##########################################################################
 #### Import data & Rename variable
-source("code/2_Welfare-model.R")
+#source("code/2_Welfare-model.R")
+
+require(ggplot2)
+
+
+#######################################################################
+######### A few plot to visualise the results
+
+## Expenditure per capita variable
+
+boxplot.expenditurecapita <- ggplot(hve, aes(x=dataset, y=Expenditure.Per.Capita, fill=dataset)) +
+  geom_boxplot() +
+  guides(fill=FALSE) +
+  ggtitle("Boxplot: Comparison of expenditure per capita")
+ggsave("out/boxplot-expenditurecapita.png", boxplot.expenditurecapita, width=8, height=6,units="in", dpi=300)
+
+#summary(hve$Expenditure.Per.Capita)
+# Histogram overlaid with Expenditure.Per.Capita
+histo.expenditurecapita <- ggplot(hve, aes(x=hve$Expenditure.Per.Capita)) + 
+  geom_histogram(aes(y =..density..), 
+                 breaks=c(1, 28, 68 , 100, 1000), 
+                 #xlim(0, 250),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(Expenditure.Per.Capita, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(dataset ~ .) +
+  labs(x="Expenditure per capita", y="Count of cases")  +
+  ggtitle("Histogramm for Expenditure per capita between dataset")
+ggsave("out/histogram-expenditurecapita.png", histo.expenditurecapita, width=8, height=6,units="in", dpi=300)
+
+
+## Doing the same but facetting on Gov_NAME  -- Governorates
+boxplot.expenditurecapita.gov <- ggplot(hve, aes(x=Gov_NAME, y=Expenditure.Per.Capita, fill=Gov_NAME)) +
+  geom_boxplot() +
+  guides(fill=FALSE) +
+  ggtitle("Boxplot: Comparison of expenditure per capita")
+ggsave("out/boxplot-expenditurecapitagov.png", boxplot.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
+#summary(hve$Expenditure.Per.Capita)
+# Histogram overlaid with Expenditure.Per.Capita
+histo.expenditurecapita.gov <- ggplot(hve, aes(x=hve$Expenditure.Per.Capita)) + 
+  geom_histogram(aes(y =..density..), 
+                 breaks=c(1, 28, 68 , 100, 1000), 
+                 #xlim(0, 250),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(Expenditure.Per.Capita, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(Gov_NAME ~ .) +
+  labs(x="Expenditure per capita", y="Count of cases")  +
+  ggtitle("Histogramm for Expenditure per capita per Governorate")
+ggsave("out/histogram-expenditurecapitagov.png", histo.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
+
+
+
+###########################################
+## Log Expenditure per capita variable
+
+#summary(hve$Expenditure.Per.Capita)
+# Histogram overlaid with Expenditure.Per.Capita
+histo.ln.expenditurecapita <- ggplot(hve, aes(x=hve$ln.Expenditure.Per.Capita)) + 
+  geom_histogram(aes(y =..density..), 
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(ln.Expenditure.Per.Capita, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(dataset ~ .) +
+  labs(x="log Expenditure per capita")  +
+  ggtitle("Histogramm for ln.Expenditure per capita between dataset")
+ggsave("out/histogram-lnexpenditurecapita.png", histo.ln.expenditurecapita, width=8, height=6,units="in", dpi=300)
+
+
+## Doing the same but facetting on Gov_NAME  -- Governorates
+histo.ln.expenditurecapita.gov <- ggplot(hve, aes(x=hve$ln.Expenditure.Per.Capita)) + 
+  geom_histogram(aes(y =..density..),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(ln.Expenditure.Per.Capita, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(Gov_NAME ~ .) +
+  labs(x="log Expenditure per capita")  +
+  ggtitle("Histogramm for ln.Expenditure per capita per Governorate")
+ggsave("out/histogram-expenditurecapitagovln.png", histo.ln.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
+
+
+
+
+
+
+#################################################
+# Histogram for predicted expenditure per capita
+summary(hve$predictedwellfare.vw5.v3)
+histo.predictedwellfare.vw5.v3 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v3)) + 
+  geom_histogram(aes(y =..density..), 
+                 breaks=c(-170, 28, 68 , 100, 4000), 
+                 #xlim(0, 250),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(predictedwellfare.vw5.v3, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(dataset ~ .) +
+  labs(x="Expenditure per capita", y="Count of cases")  +
+  ggtitle("Histogramm for Predicted expenditure per capita based on v3")
+ggsave("out/histogram-predictedwellfarevw5v3.png", histo.predictedwellfare.vw5.v3, width=8, height=6,units="in", dpi=300)
+
+summary(hve$predictedwellfare.vw5.v4)
+histo.predictedwellfare.vw5.v4 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v4)) + 
+  geom_histogram(aes(y =..density..), 
+                 breaks=c(-105, 28, 68 , 100, 1000), 
+                 #xlim(0, 250),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(predictedwellfare.vw5.v4, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(dataset ~ .) +
+  labs(x="Expenditure per capita", y="Count of cases")  +
+  ggtitle("Histogramm for Predicted expenditure per capita based on v4")
+ggsave("out/histogram-predictedwellfarevw5v4.png", histo.predictedwellfare.vw5.v4, width=8, height=6,units="in", dpi=300)
+
+
+##################
+#hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue", main = "Histogram of Welfare Model -vw5- estimated on V4 dataset", xlab = "Expected welfare Score ")
+#hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue", main = "Histogram of Welfare Model -vw5- estimated on V3 dataset", xlab = "Expected welfare Score ")
+
 
 
 
@@ -34,14 +157,6 @@ v4.class.plot <- ggplot(data=hve, aes(x= predictedwellfare.vw5.v4.class , y=Hous
   ggtitle("Vulnerability Classification")
 # Save this!
 ggsave("out/v4-class-plot.png", v4.class.plot, width=8, height=6,units="in", dpi=300)
-
-
-
-
-
-
-
-
 
 
 ###############################################################

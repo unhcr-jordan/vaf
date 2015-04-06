@@ -1,5 +1,11 @@
 ##########################################################################
 #PROBIT MODEL:
+# Limited Dependent Variable (LDV) models, more specifically the Probit and the Logit models are binary classification models
+# and the outcome variable takes value 0 for ‘non-poor’ or 1 for ‘poor’. 
+# The poverty threshold is set at 50 JD per person per month. 
+# The estimated response probabilities are strictly between zero and one. 
+# Values above 0.5 denote ‘poor’. The Probit model is based on the standard normal cumulative
+# distribution function (cdf), whilst the standard logistic cdf yields the Logit model. 
 ##########################################################################
 #Poor Variable (if expenditure per capita less than or equal to 50 then 1, otherwise 0):
 

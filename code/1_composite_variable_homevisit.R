@@ -71,7 +71,6 @@ hve$Family.Size <- as.numeric(hve$Household.information.Family.Size)
 hve$Family.Size.Squared <- as.numeric(hve$Household.information.Family.Size) ^ 2
 
 #summary(hve$Family.Size)
-
 ## Renamed to Home visit Case size squarred
 
 #summary(hve$Household.information.Family.Size)
@@ -266,5 +265,58 @@ hve$Spices.And.Condiments.Bought.With.Cash <- ifelse(hve$Over.the.last.7.days..h
 
 
 
+hve$house.assets <- (  hve$Type.of.Housing.Assets...Floor.mattress,
+                                 hve$Type.of.Housing.Assets...Sofa.set,
+                                 hve$Type.of.Housing.Assets...Kitchen.utilities,
+                                 hve$Type.of.Housing.Assets...Computer,
+                                 hve$Type.of.Housing.Assets...Blankets,
+                                 hve$Type.of.Housing.Assets...Stove,
+                                 hve$Type.of.Housing.Assets...Washing.machine,
+                                 hve$Type.of.Housing.Assets...Table-chairs,
+                                 hve$Type.of.Housing.Assets...Cabinets,
+                                 hve$Type.of.Housing.Assets...Fridge,
+                                 hve$Type.of.Housing.Assets...Television,
+                                 hve$Type.of.Housing.Assets...Water.heater,
+                                 hve$Type.of.Housing.Assets...Freezer,
+                                 hve$Type.of.Housing.Assets...Other..specify)
+
+
+### Additional variables -- 
+
+#  House Assets: Kitchen Access + Sanitary Facilities Access + Ventilation + Electricity Access
+
+#	House Luxury Assets: Floor Mattress + Sofas/Beds + Cabinets + Kitchen utilities + Freezer + Fridge + Television + Water heater + Others + Oven
+
+#	Type of Housing (Poor Conditions): Damp Walls + Leaking Roof + Hygienic Concerns + Privacy Concerns + Rodents + Poor Insulation + Broken Windows
+
+#	Total Amount of NFIs & NCIs Received in last 6 Months: Mattresses + Blankets/Pillows + Detergents/Hygiene Items + Kitchen Equipment + Furniture + Stove + Gas Cylinder + Fan + Cloth/Shoes + Electrical Equipment 
+
+#	Total Amount of NFIs & NCIs that are Regular Family Needs: Mattresses + Blankets/Pillows + Detergents/Hygiene Items + Kitchen Equipment + Furniture + Stove + Gas Cylinder + Fan + Cloth/Shoes + Electrical Equipment 
+
+#	No Water Coping Strategies (Total Amount of ‘What Did You Do’ in the Past Month When You Didn’t Have Water): Buy from Own Pocket + Borrow From Family or Borrow Money to Buy + Shop Credit + Stay Without + Other
+
+#	Coping Strategies Index (Total Number of Coping Strategies Taken in the Last 6 Months): Living together with host family (Jordanian & Syrian) + Sharing costs with host family (Jordanian & Syrian) + Support from family members (irregular remittances) + Support from host community (Jordanian & Syrian) + Humanitarian assistance (CBOs. personal donations. etc.) + Selling properties (jewelry. car. etc.) + Selling food vouchers + Selling household assets + Borrowing money + Buying against credit + Dropping children out from school + Child labor + Begging + Savings + Irregular Work + Have not paid the rent for the past months
+
+#	WFP Food Consumption Score: Times Consumed Each Product in the Last Week multiplied by its Weight
+#	PRODUCTS: Cereals (Weight: 2), White Tubers & Roots (Weight: 2), Vegetables & Leaves (Weight: 1), Fruits (Weight: 1), Meat (Weight: 4), Eggs (Weight: 4), Fish & Seafood (Weight: 4), Pulses, Nuts & Seeds (Weight: 3), Milk & Dairy Products (Weight: 4), Oils & Fats (Weight: 0.5), Sweets (Weight: 0.5), Spices & Condiment (Weight: 0)
+
+#	WFP Coping Strategy Index: 5 Coping Strategies Employed in the Last Week Multiplied by its Weight
+
+#	COPING STRATEGIES: Rely on less preferred and less expensive food (i.e. cheaper lower quality food) (Weight: 1), Borrow food or relied on help from relative(s) or friend(s) (Severity Weight: 2), Reduce number of meals eaten a day (Severity Weight 2), Limit portion size at mealtime (different from above: i.e. less food per meal (Severity Weight: 1), Restrict consumption by adults in order for small children to eat (Severity Weight: 2)
+                                                                                                                                                                                                                                                                                             •	Coping Strategies Used to Meet Basic Food Needs (In the Past 30 Days): Spent savings + Bought food on credit or borrowed money to purchase food + Reduced essential non-food expenditure such as education/health + Sell household goods (jewelry, phone, furniture, electro domestics, etc.) + Sell productive assets or means of transport (sewing machine, car, wheel barrow, bicycle, motorbike, etc.) + Since arriving in Jordan have you accepted high risk, illegal, socially degrading or exploitive temporary jobs + Sent adult family members to beg + Sent children (under 18) family members to beg
+                                                                                                                                                                                                                                                                                             o	MAX: 8
+                                                                                                                                                                                                                                                                                             •	Reasons Children Do Not Attend School: Do not know + Not interested in school + Child marriage/engagement + Child labour + No resources + Distance to school + Issues at School + Safety fears + Other + Do not know if school registration is possible + Were not going to school in Syria + Waiting for return in Syria to register children in school + financial constraints + Expired asylum-seeker certificate + Big gap between last grade in home country and one supposed to attend in Jordan + Don’t have an MOI card + Psychological distress + Disability + Not comfortable with teachers/teaching methods/curriculum + Prefer teachers from same nationality + Difficult dialect + Moving from one house to another + Arrival in Jordan in the middle of academic year 
+                                                                                                                                                                                                                                                                                             o	MAX: 23
+                                                                                                                                                                                                                                                                                             •	Chronic Diseases in Family: Hypertension + Diabetes + Cardiovascular + Critical Medical Conditions + Other
+                                                                                                                                                                                                                                                                                             o	MAX: 5
+                                                                                                                                                                                                                                                                                             •	Vaccinations NOT received: Measles + Polio + Routine Vaccines (EPI)
+                                                                                                                                                                                                                                                                                             o	MAX: 3
+                                                                                                                                                                                                                                                                                             •	Age & Disability Amongst Family Members in Same File Number: Chronic diseases/impairments/dishabilles + Pregnant females with complications + Visual/Hearing Impairment + Other physical disability + Mental disability + Intellectual disability + Temporary Injured + Chronically ill or serious medical condition + People in need of support to do daily activities
+                                                                                                                                                                                                                                                                                             o	MAX: 9
+                                                                                                                                                                                                                                                                                             
+
+
 write.csv(hve, file="out/hve.csv")
 
+
+names(hve)

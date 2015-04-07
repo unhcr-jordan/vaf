@@ -4,7 +4,8 @@
 #"maptools","rgdal","rgeos","ggmap","sp","hexbin",")
 #install.packages(pkgs=lab.packages)
 
-packages <- c("ggplot2", # package for elegant data visualization using the Grammar of Graphics
+packages <- c(  "lme4", "lmtest", "cart", ## used for regressions
+              "ggplot2", # package for elegant data visualization using the Grammar of Graphics
               "Hmisc", # generate a detailled describtion of a given dataset 
               "AER",  # interesting datasets
               "lattice", 
@@ -24,9 +25,11 @@ packages <- c("ggplot2", # package for elegant data visualization using the Gram
               "reshape2", # package to easily melt data to long form
               "RColorBrewer", # a package offering color palette from 
               "extrafont", ##" load additional font
-              "sp","maptools","rgdal","rgeos","ggmap",#"PBSmapping", ## packages used for the maps --
+              "sp","maptools","rgdal","rgeos","ggmap","hexbin", ## packages used for the maps --
+              #"PBSmapping", 
               ## install gdal and geos separately before  http://robinlovelace.net/r/2013/11/26/installing-rgdal-on-ubuntu.html
-              "raster","classInt","lubridate","date","gdata","gridExtra","scales",
+              "classInt",  ## used for all calissification
+              "raster","lubridate","date","gdata","gridExtra","scales",
               "ggthemes", ## load different custmised theme: excel, stata, economist, tufte, wall street journal...
               "xkcd", ## Style from the xkcd comics 
               "formatR" #, "gWidgetsRGtk2" # used to format the code
@@ -40,8 +43,11 @@ rm(packages)
 
 # loads packages into memory
 library(lattice)
-library(gmodels)
+#library(gmodels)
 library(car)
+library(lme4)
+library(lmtest)
+
 library(plyr)
 library(ggplot2) ## The grammar of graphics!
 library(extrafont) ## Additional fonts
@@ -51,7 +57,7 @@ library(reshape2) ## Restructure data between wide and long format before plotti
 library(maptools) ## Create maps
 library(rgdal) ## Open geographic files
 library(rgeos)
-library(PBSmapping)
+# library(PBSmapping)
 library(ggmap) ## get background map from google map
 library(sp) ## Spatial library
 library(raster) ## Managing raster dataset
@@ -70,6 +76,7 @@ library(formatR)
 # install.packages('data.table') may need to be run if you don't have the
 # package
 library(data.table)
+
 outlierReplace = function(dataframe, cols, rows, newValue = NA) {
   if (any(rows)) {
     set(dataframe, rows, cols, newValue)

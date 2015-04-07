@@ -349,6 +349,58 @@ hve$shelter  <- factor(hve$shelter, levels = c("Improved", "Traditional", "OpenA
 
 
 
+##################################################
+## Section Looking into MEB related information ##
+##################################################
+
+## recoding MEB variables
+
+# 'Monthly.Expenditure.-JD-.The.portion.Rent.that.you.are.paying'
+hve$Exp_Rent_portion <- as.numeric(as.character(hve$Monthly.Expenditure..JD..The.portion.Rent.that.you.are.paying))
+
+# Monthly.Expenditure.-JD-.Utilities.-electricity..gas..etc.-',
+hve$Exp_Utilities <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Utilities..electricity..gas..etc..))
+
+# Monthly.Expenditure.-JD-.Food.-excluding.WFP.vouchers-',
+hve$Exp_Food_ex_WFP <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Food..excluding.WFP.vouchers..))
+
+# Monthly.Expenditure.-JD-.Water.-network..tanker..bottled..dislodging.waste.water..etc.-',
+hve$Exp_WASH <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Water..network..tanker..bottled..dislodging.waste.water..etc..))
+
+# Monthly.Expenditure.-JD-.Treatment.-medical..pharmaceuticals-',
+hve$Exp_MED <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Treatment..medical..pharmaceuticals..))
+
+# Monthly.Expenditure.-JD-.Education',
+hve$Exp_EDU <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Education))
+
+# 'Monthly.Expenditure.-JD-.Education',
+hve$Exp_transport <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Transportation))
+
+# Monthly.Expenditure.-JD-.Infant.needs.-diapers-milk-',
+hve$Exp_infant_needs <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Infant.needs..diapers..milk..))
+
+# 'Monthly.Expenditure.-JD-.Basic.HH.items.-hygiene.and.NFIs-',
+hve$Exp_basic_needs <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Basic.HH.items..hygiene.and.NFIs..))
+
+# 'Monthly.Expenditure.-JD-.Debt.repayment.-monthly-',
+hve$Exp_debt <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Debt.repayment..monthly..))
+
+# 'Monthly.Expenditure.-JD-.Other..please.specify',
+hve$Exp_other <- as.numeric(as.character(hve$Monthly.Expenditure..JD..Other..please.specify))
+
+# 'Financial.Situation.Total.Expenditure',
+hve$Exp_total <- as.numeric(as.character(hve$Financial.Situation.Total.Expenditure))
+
+
+## Change date format
+hve$HV_Date <- as.Date(as.character(hve$Date.of.Visit.), "%d-%m-%Y")
+## Get month only  
+hve$Month.Visit <- format(as.Date(as.character(hve$Date.of.Visit.), "%d-%m-%Y"), "%m-%Y")
+
+# View(hve$Month.Visit)
+
+
+
 write.csv(hve, file="out/hve.csv")
 
 #names(hve)

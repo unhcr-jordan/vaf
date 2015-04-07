@@ -315,6 +315,21 @@ hve$Spices.And.Condiments.Bought.With.Cash <- ifelse(hve$Over.the.last.7.days..h
 #   Age & Disability Amongst Family Members in Same File Number: Chronic diseases/impairments/dishabilles + Pregnant females with complications + Visual/Hearing Impairment + Other physical disability + Mental disability + Intellectual disability + Temporary Injured + Chronically ill or serious medical condition + People in need of support to do daily activities
 
 
+
+## Recoding shleter variable - 
+hve$shelter <- ""
+hve$shelter <- with(hve,
+                       ifelse( ( hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Permanent.Shelter..structurally.durable.sound.building.with.permanent.materials..cement.. == 1),
+                              paste0("Permanent"), hve$shelter ))
+hve$shelter <- with(hve,
+                    ifelse( ( hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Transitional.Shelter..caravan..mud.hut..tin.or.wood.structure..scrap.material.. == 1),
+                    paste0("Transitional"), hve$shelter ))
+hve$shelter <- with(hve,
+                    ifelse( ( hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Temporary..emergency.shelter..tent.. == 1),
+                    paste0("Temporary"), hve$shelter ))
+View(hve$shelter)
+
+
 write.csv(hve, file="out/hve.csv")
 
 #names(hve)

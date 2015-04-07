@@ -25,6 +25,8 @@ require(plotmapbox)
 #bounding <- bbox(datsp)
 jordanbox <- c(34.8, 29.1, 39.5, 33.5) 
 
+## Center on north 32.2607107,36.5205146,9
+
 
 require("ggmap")
 googleterrain <- get_map(location = c(lon =37.22, lat = 31.32),
@@ -34,6 +36,10 @@ googleeterrain <- ggmap(googleterrain)
 googleroad <- get_map(location = jordanbox,
                          color = "bw", source = "google",maptype = "road", zoom = 7)
 googleeroad <- ggmap(googleroad)
+
+northroad <- get_map(location = c(lon =36.12, lat = 32.26),
+                         color = "bw", source = "google",maptype = "road", zoom = 9)
+northeroad <- ggmap(northroad)
 
 ## Black & White cropped background map
 stamen <- get_map(location = jordanbox,
@@ -159,6 +165,27 @@ ggsave("out/map-exp-4low.png", map.exp.low, width=8, height=6,units="in", dpi=30
 rm(map.exp.low)
 rm(hve.exp.low)
 
+
+#################
+## Zoom on the north 
+
+rm(hve.exp.severe)
+hve.exp.severe <- hve[(hve$Expenditure.Per.Capita.class == "Severe"), ]
+rm(map.exp.severe)
+map.exp.severe.north <- northeroad
+map.exp.severe.north <- map.exp.severe.north +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve.exp.severe, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "Severe - # of Ind ") +
+  ggtitle("Home Visit Analysis- Expenditure.Per.Capita. Severe ")
+ggsave("out/map-exp-1severe-north.png", map.exp.severe.north, width=8, height=6,units="in", dpi=300)
+rm(map.exp.severe.north)
+rm(hve.exp.severe)
 
 #################################
 ## Trying the same on Predicted Welfare score for v3

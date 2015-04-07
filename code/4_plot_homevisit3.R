@@ -17,6 +17,89 @@ boxplot.expenditurecapita <- ggplot(hve, aes(x=dataset, y=Expenditure.Per.Capita
   ggtitle("Boxplot: Comparison of expenditure per capita")
 ggsave("out/boxplot-expenditurecapita.png", boxplot.expenditurecapita, width=8, height=6,units="in", dpi=300)
 
+
+
+boxplot.expenditurecapita.size <- ggplot(hve, aes(x=case.size.vaf, y=Expenditure.Per.Capita #, fill=dataset
+                                                  )) +
+  geom_boxplot() + 
+  ggtitle("Boxplot: Expenditure per capita vs case size") + 
+  theme(axis.text.x=element_text(angle=90, size=14, vjust=0.5), 
+        axis.text.y=element_text(size=14), 
+        axis.title.x=element_text(size=15), 
+        axis.title.y=element_text(size=15), 
+        plot.title=element_text(size=17)) + 
+  scale_y_continuous( name="Expenditure.Per.Capita") +
+  scale_x_continuous("Case size")
+ggsave("out/boxplot-expenditurecapita_size.png", boxplot.expenditurecapita.size, width=8, height=6,units="in", dpi=300)
+
+
+scatterplot.expenditurecapita.size <-ggplot(hve, aes(x=case.size.vaf, y=Expenditure.Per.Capita)) +
+  geom_point(size=3) + 
+  ggtitle("Scatterplot: Expenditure per capita vs case size") + 
+  theme(axis.text.x=element_text(size=14, vjust=0.5), 
+        axis.text.y=element_text(size=14), 
+        axis.title.x=element_text(size=15), 
+        axis.title.y=element_text(size=15), 
+        plot.title=element_text(size=17)) + 
+  scale_y_continuous( name="Expenditure.Per.Capita") +
+  scale_x_continuous("Case size") + 
+  stat_smooth(se=FALSE)
+ggsave("out/scatterplot-expenditurecapita_size.png", scatterplot.expenditurecapita.size, width=8, height=6,units="in", dpi=300)
+
+
+scatterplot.expenditurecapita.housecrowding <-ggplot(hve, aes(x=case.size.vaf, y=House.Crowding)) +
+  geom_point(size=3) + 
+  ggtitle("Scatterplot: Expenditure per capita vs House.Crowding") + 
+  theme(axis.text.x=element_text(size=14, vjust=0.5), 
+        axis.text.y=element_text(size=14), 
+        axis.title.x=element_text(size=15), 
+        axis.title.y=element_text(size=15), 
+        plot.title=element_text(size=17)) + 
+  scale_y_continuous( name="Expenditure.Per.Capita") +
+  scale_x_continuous("House.Crowding") + 
+  stat_smooth(se=FALSE)
+ggsave("out/scatterplot-expenditurecapita_housecrowding.png", scatterplot.expenditurecapita.housecrowding, width=8, height=6,units="in", dpi=300)
+
+scatterplot.expenditurecapita.income <-ggplot(hve, aes(x=case.size.vaf, y=Income.Per.Capita)) +
+  geom_point(size=3) + 
+  ggtitle("Scatterplot: Expenditure per capita vs Income.Per.Capita") + 
+  theme(axis.text.x=element_text(size=14, vjust=0.5), 
+        axis.text.y=element_text(size=14), 
+        axis.title.x=element_text(size=15), 
+        axis.title.y=element_text(size=15), 
+        plot.title=element_text(size=17)) + 
+  scale_y_continuous( name="Expenditure.Per.Capita") +
+  scale_x_continuous("Income.Per.Capita") + 
+  stat_smooth(se=FALSE)
+ggsave("out/scatterplot-expenditurecapita_income.png", scatterplot.expenditurecapita.income, width=8, height=6,units="in", dpi=300)
+
+scatterplot.expenditurecapita.spice <-ggplot(hve, aes(x=case.size.vaf, y=Spices.And.Condiments.Bought.With.Cash)) +
+  geom_point(size=3) + 
+  ggtitle("Scatterplot: Expenditure per capita vs Spices.And.Condiments.Bought.With.Cash") + 
+  theme(axis.text.x=element_text(size=14, vjust=0.5), 
+        axis.text.y=element_text(size=14), 
+        axis.title.x=element_text(size=15), 
+        axis.title.y=element_text(size=15), 
+        plot.title=element_text(size=17)) + 
+  scale_y_continuous( name="Expenditure.Per.Capita") +
+  scale_x_continuous("Spices.And.Condiments.Bought.With.Cash") + 
+  stat_smooth(se=FALSE)
+ggsave("out/scatterplot-expenditurecapita_spice.png", scatterplot.expenditurecapita.spice, width=8, height=6,units="in", dpi=300)
+
+
+scatterplot.expenditurecapita.Rent.Occupancy <-ggplot(hve, aes(x=case.size.vaf, y=Rent.Occupancy)) +
+  geom_point(size=3) + 
+  ggtitle("Scatterplot: Expenditure per capita vs Rent.Occupancy") + 
+  theme(axis.text.x=element_text(size=14, vjust=0.5), 
+        axis.text.y=element_text(size=14), 
+        axis.title.x=element_text(size=15), 
+        axis.title.y=element_text(size=15), 
+        plot.title=element_text(size=17)) + 
+  scale_y_continuous( name="Expenditure.Per.Capita") +
+  scale_x_continuous("Rent.Occupancy") + 
+  stat_smooth(se=FALSE)
+ggsave("out/scatterplot-expenditurecapita_Rent_Occupancy.png", scatterplot.expenditurecapita.Rent.Occupancy, width=8, height=6,units="in", dpi=300)
+
 #summary(hve$Expenditure.Per.Capita)
 # Histogram overlaid with Expenditure.Per.Capita
 histo.expenditurecapita <- ggplot(hve, aes(x=hve$Expenditure.Per.Capita)) + 
@@ -86,12 +169,45 @@ histo.ln.expenditurecapita.gov <- ggplot(hve, aes(x=hve$ln.Expenditure.Per.Capit
 ggsave("out/histogram-expenditurecapitagovln.png", histo.ln.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
 
 
+ 
 
 
 
 
 #################################################
 # Histogram for predicted expenditure per capita
+
+testfit.vw5.v3 <- ggplot(hve, aes(x=predictedwellfare.vw5.v3, y=Expenditure.Per.Capita)) +
+  geom_point(size=3) + 
+  ggtitle("Expenditure per capita based by expenditure per capita based on v3") +
+  theme(axis.text.x=element_text(size=14, vjust=0.5),
+        axis.text.y=element_text(size=14),
+        axis.title.x=element_text(size=15),
+        axis.title.y=element_text(size=15),
+        plot.title=element_text(size=17)) +
+  scale_y_continuous(name="Expenditure.Per.Capita") +
+  scale_x_continuous("predictedwellfare.vw5.v3") +
+  geom_abline(intercept=0, slope=1, colour="yellow") +
+  stat_smooth(se=FALSE)
+ggsave("out/testfit_vw5_v3.png", testfit.vw5.v3, width=8, height=6,units="in", dpi=300)
+
+
+testfit.vw5.v4 <- ggplot(hve, aes(x=predictedwellfare.vw5.v4, y=Expenditure.Per.Capita)) +
+  geom_point(size=3) + 
+  ggtitle("Expenditure per capita based by expenditure per capita based on v4") +
+  theme(axis.text.x=element_text(size=14, vjust=0.5),
+        axis.text.y=element_text(size=14),
+        axis.title.x=element_text(size=15),
+        axis.title.y=element_text(size=15),
+        plot.title=element_text(size=17)) +
+  scale_y_continuous(name="Expenditure.Per.Capita") +
+  scale_x_continuous("predictedwellfare.vw5.v4") +
+  geom_abline(intercept=0, slope=1, colour="yellow") +
+  stat_smooth(se=FALSE)
+ggsave("out/testfit_vw5_v4.png", testfit.vw5.v4, width=8, height=6,units="in", dpi=300)
+
+
+
 summary(hve$predictedwellfare.vw5.v3)
 histo.predictedwellfare.vw5.v3 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v3)) + 
   geom_histogram(aes(y =..density..), 

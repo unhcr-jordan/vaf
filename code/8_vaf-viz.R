@@ -115,7 +115,7 @@ vafout <- vafout[ , c( "HVDate", "EiJ"  ,"crowding" ,   "Income.Per.Capita" , "D
 vafout <- rename(vafout, c(  "Income.Per.Capita"="income" , "Debt.to.Expenditure.Ratio"="debtexp" ,
                            "district_c"="dcode", "Gov_code"= "gcode", "Gov_NAME"="Governorate", "district"="District" ))
 
-progress <- read.csv("~/unhcr_r_project/homevisit/data/IMAGG.csv")
+progress <- read.csv("data/IMAGG.csv")
 names(progress)
 
 

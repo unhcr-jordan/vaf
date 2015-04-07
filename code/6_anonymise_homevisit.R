@@ -1,5 +1,16 @@
+##########################################################################
+#### Import data & Rename variable
+source("code/import_clean_rename_homevisit3.R")
+
 ########################################################
 ## Anonymisation
+
+
+### 
+
+drop2 <- c()
+homevisit3.ano <- homevisit3[,!(names(homevisit3) %in% drop2)]
+View(homevisit3.ano)
 
 
 ## sdcMicro: Statistical Disclosure Control methods for anonymization of microdata and risk estimation

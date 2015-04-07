@@ -327,7 +327,9 @@ hve$shelter <- with(hve,
 hve$shelter <- with(hve,
                     ifelse( ( hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Temporary..emergency.shelter..tent.. == 1),
                     paste0("Temporary"), hve$shelter ))
-View(hve$shelter)
+#View(hve$shelter)
+## Set up hierachy order in shelter type
+hve$shelter  <- factor(hve$shelter, levels = c("Permanent", "Transitional", "Temporary"))
 
 ## Recoding latrine variable - 
 hve$latrine <- ""
@@ -340,8 +342,9 @@ hve$latrine <- with(hve,
 hve$latrine <- with(hve,
                     ifelse( ( hve$Wastewater.What.kind.of.latrine..toilet.facility.does.your.household.use...Open.air == 1),
                             paste0("OpenAir"), hve$latrine ))
-View(hve$latrine)
-
+#View(hve$latrine)
+## Set up hierachy order in shelter type
+hve$shelter  <- factor(hve$shelter, levels = c("Improved", "Traditional", "OpenAir"))
 
 
 

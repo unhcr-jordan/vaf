@@ -231,6 +231,24 @@ map.expenditure.n <- map.expenditure.n +
 ggsave("out/map-expenditure-north.png", map.expenditure.n, width=8, height=6,units="in", dpi=300)
 rm(map.expenditure.n)
 
+###################################################
+### Mapping latrine
+
+rm(map.latrine.n)
+map.latrine.n <- northeroad
+map.latrine.n <- map.latrine.n +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  facet_grid( latrine ~ shelter ) +
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- Latrine type  ")
+ggsave("out/map-latrine-north.png", map.latrine.n, width=8, height=6,units="in", dpi=300)
+rm(map.latrine.n)
 
 
 ###################################################
@@ -262,7 +280,6 @@ rm(map.shelter.n)
 
 
 ### Mapping shelter according to expenditure level
-
 rm(map.shelter.exp.n)
 map.shelter.exp.n <- northeroad
 map.shelter.exp.n <- map.shelter.exp.n +

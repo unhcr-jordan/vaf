@@ -211,6 +211,27 @@ rm(map.exp.severe.north)
 rm(hve.exp.severe)
 
 
+## Using faceting for expenditure level
+
+rm(map.expenditure,n)
+map.expenditure.n <- northeroad
+map.expenditure.n <- map.expenditure.n +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  facet_grid( . ~ Expenditure.Per.Capita.class ) +
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- Expenditure level ") #+
+#  geom_text(aes(15, .6, label="Severe<28JOD; High=28-68JOD; Moderate=68-100JOD; Low>100jod", color="MVH")) 
+  
+ggsave("out/map-expenditure-north.png", map.expenditure.n, width=8, height=6,units="in", dpi=300)
+rm(map.expenditure.n)
+
+
 
 ###################################################
 ### Mapping type of housing
@@ -219,6 +240,45 @@ rm(hve.exp.severe)
 #Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Temporary..emergency.shelter..tent..
 
 #View(hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Permanent.Shelter..structurally.durable.sound.building.with.permanent.materials..cement..)
+
+## Using faceting
+
+rm(map.shelter.n)
+map.shelter.n <- northeroad
+map.shelter.n <- map.shelter.n +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  facet_grid( . ~ shelter ) +
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- Shelter type ")
+ggsave("out/map-shelter-north.png", map.shelter.n, width=8, height=6,units="in", dpi=300)
+rm(map.shelter.n)
+
+
+
+### Mapping shelter according to expenditure level
+
+rm(map.shelter.exp.n)
+map.shelter.exp.n <- northeroad
+map.shelter.exp.n <- map.shelter.exp.n +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  facet_grid( Expenditure.Per.Capita.class ~ shelter ) +
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- Shelter type per expenditure level ")
+ggsave("out/map-shelter-exp-north.png", map.shelter.exp.n, width=8, height=6,units="in", dpi=300)
+rm(map.shelter.exp.n)
+
 
 
 ########### Permanent
@@ -239,6 +299,7 @@ map.permanent.shelter <- map.permanent.shelter +
   ggtitle("Home Visit Analysis- permanent.shelter ")
 ggsave("out/map-permanent-shelter.png", map.permanent.shelter, width=8, height=6,units="in", dpi=300)
 rm(map.permanent.shelter)
+
 rm(map.permanent.shelter.n)
 map.permanent.shelter.n <- northeroad
 map.permanent.shelter.n <- map.permanent.shelter.n +
@@ -254,6 +315,7 @@ map.permanent.shelter.n <- map.permanent.shelter.n +
 ggsave("out/map-permanent-shelter-north.png", map.permanent.shelter.n, width=8, height=6,units="in", dpi=300)
 rm(map.permanent.shelter.n)
 rm(hve.permanent.shelter)
+
 
 
 ########### Transitional

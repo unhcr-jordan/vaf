@@ -316,7 +316,7 @@ hve$Spices.And.Condiments.Bought.With.Cash <- ifelse(hve$Over.the.last.7.days..h
 
 
 
-## Recoding shleter variable - 
+## Recoding shelter variable - 
 hve$shelter <- ""
 hve$shelter <- with(hve,
                        ifelse( ( hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Permanent.Shelter..structurally.durable.sound.building.with.permanent.materials..cement.. == 1),
@@ -328,6 +328,22 @@ hve$shelter <- with(hve,
                     ifelse( ( hve$Type.of.Housing.Type.of.Housing..Based.on.the.volunteers.observations..Temporary..emergency.shelter..tent.. == 1),
                     paste0("Temporary"), hve$shelter ))
 View(hve$shelter)
+
+## Recoding latrine variable - 
+hve$latrine <- ""
+hve$latrine <- with(hve,
+                    ifelse( ( hve$Wastewater.What.kind.of.latrine..toilet.facility.does.your.household.use...Improved.latrine.with.cement.slab...flush.latrine == 1),
+                            paste0("Improved"), hve$latriner ))
+hve$latrine <- with(hve,
+                    ifelse( ( hve$Wastewater.What.kind.of.latrine..toilet.facility.does.your.household.use...Traditional.pit.latrine..without.slab..open.pit == 1),
+                            paste0("Traditional"), hve$latrine ))
+hve$latrine <- with(hve,
+                    ifelse( ( hve$Wastewater.What.kind.of.latrine..toilet.facility.does.your.household.use...Open.air == 1),
+                            paste0("OpenAir"), hve$latrine ))
+View(hve$latrine)
+
+
+
 
 
 write.csv(hve, file="out/hve.csv")

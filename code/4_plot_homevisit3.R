@@ -5,6 +5,7 @@
 
 require(ggplot2)
 
+#names(hve)
 
 #######################################################################
 ######### A few plot to visualise the results
@@ -138,6 +139,18 @@ histo.expenditurecapita.gov <- ggplot(hve, aes(x=hve$Expenditure.Per.Capita)) +
 ggsave("out/histogram-expenditurecapitagov.png", histo.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
 
 
+#### Bar graph to show repartition by class for expenditure per capita
+bar.Expenditure.Per.Capita.class <- ggplot(data=hve, 
+                     aes(x=Expenditure.Per.Capita.class , y=case.size.vaf)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  coord_flip()+
+  xlab("Class") + 
+  ylab("# of Ind") +
+  ggtitle("Expenditure.Per.Capita.class")
+ggsave("out/barExpenditurePerCapitaclass.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
+
 
 ###########################################
 ## Log Expenditure per capita variable
@@ -169,7 +182,7 @@ histo.ln.expenditurecapita.gov <- ggplot(hve, aes(x=hve$ln.Expenditure.Per.Capit
 ggsave("out/histogram-expenditurecapitagovln.png", histo.ln.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
 
 
- 
+
 
 
 
@@ -207,6 +220,31 @@ testfit.vw5.v4 <- ggplot(hve, aes(x=predictedwellfare.vw5.v4, y=Expenditure.Per.
 ggsave("out/testfit_vw5_v4.png", testfit.vw5.v4, width=8, height=6,units="in", dpi=300)
 
 
+#### Bar graph to show repartition by class for expenditure per capita
+bar.predictedwellfare.vw5.v4.class <- ggplot(data=hve, 
+                                           aes(x=predictedwellfare.vw5.v4.class , y=case.size.vaf)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  coord_flip()+
+  xlab("Class") + 
+  ylab("# of Ind") +
+  ggtitle("predictedwellfare.vw5.v4.class")
+ggsave("out/barpredictedwellfarevw5v4class.png", bar.predictedwellfare.vw5.v4.class, width=8, height=6,units="in", dpi=300)
+
+bar.predictedwellfare.vw5.v3.class <- ggplot(data=hve, 
+                                             aes(x=predictedwellfare.vw5.v3.class , y=case.size.vaf)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  coord_flip()+
+  xlab("Class") + 
+  ylab("# of Ind") +
+  ggtitle("predictedwellfare.vw5.v3.class")
+ggsave("out/barpredictedwellfarevw5v3class.png", bar.predictedwellfare.vw5.v3.class, width=8, height=6,units="in", dpi=300)
+
+
+############ Histogramme for the models
 
 summary(hve$predictedwellfare.vw5.v3)
 histo.predictedwellfare.vw5.v3 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v3)) + 
@@ -285,7 +323,7 @@ require("reshape2")
 ####### Let's graph Assets
 
 # extract on asset per family size
-homevisit3.assets <- melt(homevisit3, id=c("Household.information.Family.Size"),
+hve.assets <- melt(hve, id=c("Household.information.Family.Size"),
                           measure=c("Type.of.Housing.Assets...Floor.mattress",
                                     "Type.of.Housing.Assets...Sofa.set",
                                     "Type.of.Housing.Assets...Kitchen.utilities",
@@ -293,35 +331,36 @@ homevisit3.assets <- melt(homevisit3, id=c("Household.information.Family.Size"),
                                     "Type.of.Housing.Assets...Blankets",
                                     "Type.of.Housing.Assets...Stove",
                                     "Type.of.Housing.Assets...Washing.machine",
-                                    "Type.of.Housing.Assets...Table-chairs",
+                                  #  "Type.of.Housing.Assets...Table-chairs",
                                     "Type.of.Housing.Assets...Cabinets",
                                     "Type.of.Housing.Assets...Fridge",
                                     "Type.of.Housing.Assets...Television",
                                     "Type.of.Housing.Assets...Water.heater",
-                                    "Type.of.Housing.Assets...Freezer",
-                                    "Type.of.Housing.Assets...Other..specify"))
+                                    "Type.of.Housing.Assets...Freezer"#,
+                                  #  "Type.of.Housing.Assets...Other..specify"
+                                  ))
 
 
 ## Reorder factor level according to a value
 
 
-homevisit3.assets <- homevisit3.assets[order(-homevisit3.assets$value), ]
+hve.assets <- hve.assets[order(- hve.assets$value), ]
 
-#homevisit3.assets$variable <- as.character(homevisit3.assets$variable)
+#hve.assets$variable <- as.character(hve.assets$variable)
 
-#str(homevisit3.assets)
+#str(hve.assets)
 
-#homevisit3.assets$variable <- factor(homevisit3.assets$variable , levels = homevisit3.assets[order(homevisit3.assets$value), 1])
+#hve.assets$variable <- factor(hve.assets$variable , levels = hve.assets[order(hve.assets$value), 1])
 
-levels(homevisit3.assets$variable)
+levels(hve.assets$variable)
 
 #
-homevisit3.assets2 <- dcast(homevisit3.assets, Household.information.Family.Size ~ variable)
+hve.assets2 <- dcast(hve.assets, Household.information.Family.Size ~ variable)
 
 
 
 # Bar graph based on reordered variable per value
-asset.plot <- ggplot(data=homevisit3.assets, aes(x=reorder(variable, value) , y=value, fill=variable)) + 
+asset.plot <- ggplot(data=hve.assets, aes(x=reorder(variable, value) , y=value, fill=variable)) + 
   geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
   # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
@@ -334,9 +373,9 @@ asset.plot <- ggplot(data=homevisit3.assets, aes(x=reorder(variable, value) , y=
 ggsave("out/assetplot.png", asset.plot, width=8, height=6,units="in", dpi=300)
 
 ## simpler version
-assetplotfamily <- ggplot(data=homevisit3.assets, aes(x=Household.information.Family.Size , y=value, fill=variable))+
-  geom_bar(stat="identity")+
-  labs(x = "", y = "")
+#assetplotfamily <- ggplot(data=hve.assets, aes(x=Household.information.Family.Size , y=value, fill=variable))+
+#  geom_bar(stat="identity")+
+#  labs(x = "", y = "")
 
 # Save this!
-ggsave("out/assetplotfamily.png", assetplotfamily, width=8, height=2,units="in", dpi=300, bg = "transparent")
+#ggsave("out/assetplotfamily.png", assetplotfamily, width=8, height=2,units="in", dpi=300, bg = "transparent")

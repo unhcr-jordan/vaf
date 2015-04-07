@@ -4,7 +4,7 @@
 #"maptools","rgdal","rgeos","ggmap","sp","hexbin",")
 #install.packages(pkgs=lab.packages)
 
-packages <- c(  "lme4", "lmtest", "cart", ## used for regressions
+packages <- c(  "lme4", "lmtest", "car", ## used for regressions
               "ggplot2", # package for elegant data visualization using the Grammar of Graphics
               "Hmisc", # generate a detailled describtion of a given dataset 
               "AER",  # interesting datasets

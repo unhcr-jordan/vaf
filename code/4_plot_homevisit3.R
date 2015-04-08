@@ -20,8 +20,7 @@ ggsave("out/boxplot-expenditurecapita.png", boxplot.expenditurecapita, width=8, 
 
 
 
-boxplot.expenditurecapita.size <- ggplot(hve, aes(x=case.size.vaf, y=Expenditure.Per.Capita #, fill=dataset
-                                                  )) +
+boxplot.expenditurecapita.size <- ggplot(hve, aes(x=case.size.vaf, y=Expenditure.Per.Capita )) +
   geom_boxplot() + 
   ggtitle("Boxplot: Expenditure per capita vs case size") + 
   theme(axis.text.x=element_text(angle=90, size=14, vjust=0.5), 
@@ -36,6 +35,7 @@ ggsave("out/boxplot-expenditurecapita_size.png", boxplot.expenditurecapita.size,
 
 scatterplot.expenditurecapita.size <-ggplot(hve, aes(x=case.size.vaf, y=Expenditure.Per.Capita)) +
   geom_point(size=3) + 
+  facet_grid(dataset ~ .) +
   ggtitle("Scatterplot: Expenditure per capita vs case size") + 
   theme(axis.text.x=element_text(size=14, vjust=0.5), 
         axis.text.y=element_text(size=14), 
@@ -50,6 +50,7 @@ ggsave("out/scatterplot-expenditurecapita_size.png", scatterplot.expenditurecapi
 
 scatterplot.expenditurecapita.housecrowding <-ggplot(hve, aes(x=case.size.vaf, y=House.Crowding)) +
   geom_point(size=3) + 
+  facet_grid(dataset ~ .) +
   ggtitle("Scatterplot: Expenditure per capita vs House.Crowding") + 
   theme(axis.text.x=element_text(size=14, vjust=0.5), 
         axis.text.y=element_text(size=14), 
@@ -63,6 +64,7 @@ ggsave("out/scatterplot-expenditurecapita_housecrowding.png", scatterplot.expend
 
 scatterplot.expenditurecapita.income <-ggplot(hve, aes(x=case.size.vaf, y=Income.Per.Capita)) +
   geom_point(size=3) + 
+  facet_grid(dataset ~ .) +
   ggtitle("Scatterplot: Expenditure per capita vs Income.Per.Capita") + 
   theme(axis.text.x=element_text(size=14, vjust=0.5), 
         axis.text.y=element_text(size=14), 
@@ -76,6 +78,7 @@ ggsave("out/scatterplot-expenditurecapita_income.png", scatterplot.expenditureca
 
 scatterplot.expenditurecapita.spice <-ggplot(hve, aes(x=case.size.vaf, y=Spices.And.Condiments.Bought.With.Cash)) +
   geom_point(size=3) + 
+  facet_grid(dataset ~ .) +
   ggtitle("Scatterplot: Expenditure per capita vs Spices.And.Condiments.Bought.With.Cash") + 
   theme(axis.text.x=element_text(size=14, vjust=0.5), 
         axis.text.y=element_text(size=14), 
@@ -90,6 +93,7 @@ ggsave("out/scatterplot-expenditurecapita_spice.png", scatterplot.expenditurecap
 
 scatterplot.expenditurecapita.Rent.Occupancy <-ggplot(hve, aes(x=case.size.vaf, y=Rent.Occupancy)) +
   geom_point(size=3) + 
+  facet_grid(dataset ~ .) +
   ggtitle("Scatterplot: Expenditure per capita vs Rent.Occupancy") + 
   theme(axis.text.x=element_text(size=14, vjust=0.5), 
         axis.text.y=element_text(size=14), 
@@ -100,6 +104,7 @@ scatterplot.expenditurecapita.Rent.Occupancy <-ggplot(hve, aes(x=case.size.vaf, 
   scale_x_continuous("Rent.Occupancy") + 
   stat_smooth(se=FALSE)
 ggsave("out/scatterplot-expenditurecapita_Rent_Occupancy.png", scatterplot.expenditurecapita.Rent.Occupancy, width=8, height=6,units="in", dpi=300)
+
 
 #summary(hve$Expenditure.Per.Capita)
 # Histogram overlaid with Expenditure.Per.Capita
@@ -220,29 +225,6 @@ testfit.vw5.v4 <- ggplot(hve, aes(x=predictedwellfare.vw5.v4, y=Expenditure.Per.
 ggsave("out/testfit_vw5_v4.png", testfit.vw5.v4, width=8, height=6,units="in", dpi=300)
 
 
-#### Bar graph to show repartition by class for expenditure per capita
-bar.predictedwellfare.vw5.v4.class <- ggplot(data=hve, 
-                                           aes(x=predictedwellfare.vw5.v4.class , y=case.size.vaf)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  coord_flip()+
-  xlab("Class") + 
-  ylab("# of Ind") +
-  ggtitle("predictedwellfare.vw5.v4.class")
-ggsave("out/barpredictedwellfarevw5v4class.png", bar.predictedwellfare.vw5.v4.class, width=8, height=6,units="in", dpi=300)
-
-bar.predictedwellfare.vw5.v3.class <- ggplot(data=hve, 
-                                             aes(x=predictedwellfare.vw5.v3.class , y=case.size.vaf)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  coord_flip()+
-  xlab("Class") + 
-  ylab("# of Ind") +
-  ggtitle("predictedwellfare.vw5.v3.class")
-ggsave("out/barpredictedwellfarevw5v3class.png", bar.predictedwellfare.vw5.v3.class, width=8, height=6,units="in", dpi=300)
-
 
 ############ Histogramme for the models
 
@@ -280,37 +262,32 @@ ggsave("out/histogram-predictedwellfarevw5v4.png", histo.predictedwellfare.vw5.v
 #hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue", main = "Histogram of Welfare Model -vw5- estimated on V3 dataset", xlab = "Expected welfare Score ")
 
 
-
-
-
-###############################################################
-### Graph example with gplot2
-##############################################################
-
-### Plotting classe
-
-v3.class.plot <- ggplot(data=hve, aes(x= predictedwellfare.vw5.v3.class , y=Household.information.Family.Size)) + 
+#### Bar graph to show repartition by class for expenditure per capita
+bar.predictedwellfare.vw5.v4.class <- ggplot(data=hve, 
+                                             aes(x=predictedwellfare.vw5.v4.class , y=case.size.vaf)) + 
   geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
- # geom_text(aes(label= predictedwellfare.vw5.v3.class), vjust=0) +
+  # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
-  coord_flip()+
+  #coord_flip()+
   xlab("Class") + 
-  ylab("# of Ind in Household") +
-  ggtitle("Vulnerability Classification")
-# Save this!
-ggsave("out/v3-class-plot.png", v3.class.plot, width=8, height=6,units="in", dpi=300)
+  ylab("# of Ind") +
+  ggtitle("predictedwellfare.vw5.v4.class")
+ggsave("out/barpredictedwellfarevw5v4class.png", bar.predictedwellfare.vw5.v4.class, width=8, height=6,units="in", dpi=300)
 
 
-v4.class.plot <- ggplot(data=hve, aes(x= predictedwellfare.vw5.v4.class , y=Household.information.Family.Size)) + 
+
+bar.predictedwellfare.vw5.v3.class <- ggplot(data=hve, 
+                                             aes(x=predictedwellfare.vw5.v3.class , y=case.size.vaf)) + 
   geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label= predictedwellfare.vw5.v3.class), vjust=0) +
+  # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
-  coord_flip()+
+  #coord_flip()+
   xlab("Class") + 
-  ylab("# of Ind in Household") +
-  ggtitle("Vulnerability Classification")
-# Save this!
-ggsave("out/v4-class-plot.png", v4.class.plot, width=8, height=6,units="in", dpi=300)
+  ylab("# of Ind") +
+  ggtitle("predictedwellfare.vw5.v3.class")
+ggsave("out/barpredictedwellfarevw5v3class.png", bar.predictedwellfare.vw5.v3.class, width=8, height=6,units="in", dpi=300)
+
+
 
 
 ###############################################################

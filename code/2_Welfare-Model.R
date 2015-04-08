@@ -31,10 +31,10 @@ library(ggplot2)
 ######### First step subset the dataframe in order to keep the column that make snese for the regression.
 
 hve.model <- hve
-#names(hve.model)
+names(hve.model)
 
 hve.model3 <-hve[ hve$dataset == "homevisit3", c("Expenditure.Per.Capita",
-                                                   "Debt.To.Expenditure",
+                                                 "Debt.To.Expenditure",
                                                  "House.Crowding",
                                                  "House.Crowding.Squared",
                                                  "Income.Per.Capita",
@@ -43,6 +43,7 @@ hve.model3 <-hve[ hve$dataset == "homevisit3", c("Expenditure.Per.Capita",
                                                  "Family.Size.Squared",
                                                  "Spices.And.Condiments.Bought.With.Cash",
                                                  "Rent.Occupancy")  ]
+
 hve.model4 <-hve[ hve$dataset == "homevisit4", c("Expenditure.Per.Capita",
                                                  "Debt.To.Expenditure",
                                                  "House.Crowding",
@@ -77,13 +78,26 @@ vw5.v3 <- lm(Expenditure.Per.Capita ~
 summary(vw5.v3)
 vw5.v3.summary.coeff <- as.data.frame(summary(vw5.v3)$coefficients[, 1:4])
 
+# Other useful functions for regression review
+png(filename="out/regression-vw5-v3.png")
+layout(matrix(c(1,2,3,4),2,2))  
+plot(vw5.v3)
+dev.off()
+
+vw5.v3.coefficients <- coefficients(vw5.v3) # model coefficients
+vw5.v3.confint <- confint(vw5.v3, level=0.95) # CIs for model parameters 
+vw5.v3.fitted <- as.data.frame(fitted(vw5.v3)) # predicted values
+vw5.v3.residuals <- as.data.frame(residuals(vw5.v3)) # residuals
+vw5.v3.anova <- as.data.frame(anova(vw5.v3)) # anova table 
+vw5.v3.vcov <- as.data.frame(vcov(vw5.v3)) # covariance matrix for model parameters 
+vw5.v3.influence <- as.data.frame( influence(vw5.v3)) # regression diagnostics
 
 ############### Eliminate outliers to improve the model - on vw5.v3
 ## outlier test - Bonferroni error - within car package
 #outlierTest(vw5.v3, n.max=10000)
-#outlier.bonferroni.v4 <-  as.data.frame(outlierTest(vw5.v3, n.max=10000)$coefficients[, 1:4])
+#outlier.bonferroni.v3 <-  as.data.frame(outlierTest(vw5.v3, n.max=10000)$coefficients[, 1:4])
 #Leverage & Hat-values outliers:
-#outlier.avghat.v3 <- as.data.frame(unname(which(hatvalues(vw5.v3)>2* (length(coef(vw5.v3)) / nrow(vw5.v4$model)) )))
+#outlier.avghat.v3 <- as.data.frame(unname(which(hatvalues(vw5.v3)>2* (length(coef(vw5.v3)) / nrow(vw5.v3$model)) )))
 #Cooks Distance outliers:
 #outlier.cookdistance.v3 <- as.data.frame(unname(which(cooks.distance(vw5.v3) >4 /vw5.v3$df.residual)))
 
@@ -103,6 +117,8 @@ vw5.v3.out <- lm( Expenditure.Per.Capita ~
                    data=hve.model3)
 vw5.v3.out.summary.coeff <- as.data.frame(summary(vw5.v3.out)$coefficients[, 1:4])
 
+write.csv(vw5.v3.out.summary.coeff, file="out/vw5v3outsummary.coeff.csv")
+
 ### Generate predicted welfare index based on variables of the model generated through v3 dataset
 hve$predictedwellfare.vw5.v3 <- ( hve$Debt.To.Expenditure * vw5.v3.out.summary.coeff[2,1]) +
   ( hve$House.Crowding * vw5.v3.out.summary.coeff[3,1]) +
@@ -114,7 +130,7 @@ hve$predictedwellfare.vw5.v3 <- ( hve$Debt.To.Expenditure * vw5.v3.out.summary.c
   ( hve$Spices.And.Condiments.Bought.With.Cash * vw5.v3.out.summary.coeff[9,1]) +
   ( hve$Rent.Occupancy* vw5.v3.out.summary.coeff[10,1])
 
-#summary(hve$predictedwellfare.vw5.v3)
+summary(hve$predictedwellfare.vw5.v3)
 
 ## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
 hve$predictedwellfare.vw5.v3.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v3, n = 4, style = "fixed", fixedBreaks = c(-105, 28, 68 , 100, 1000))))
@@ -140,7 +156,27 @@ vw5.v4 <- lm(Expenditure.Per.Capita ~
              data=hve.model4
 )
 #summary(vw5vw5.v4)
+
 vw5.v4.summary.coeff <- as.data.frame(summary(vw5.v4)$coefficients[, 1:4])
+
+
+# Other useful functions for regression review
+# Other useful functions for regression review
+png(filename="out/regression-vw5-v4.png")
+layout(matrix(c(1,2,3,4),2,2))  
+plot(vw5.v4)
+dev.off()
+
+vw5.v4.coefficients <- coefficients(vw5.v4) # model coefficients
+vw5.v4.confint <- confint(vw5.v4, level=0.95) # CIs for model parameters 
+vw5.v4.fitted <- as.data.frame(fitted(vw5.v4)) # predicted values
+vw5.v4.residuals <- as.data.frame(residuals(vw5.v4)) # residuals
+vw5.v4.anova <- as.data.frame(anova(vw5.v4)) # anova table 
+vw5.v4.vcov <- as.data.frame(vcov(vw5.v4)) # covariance matrix for model parameters 
+vw5.v4.influence <- as.data.frame( influence(vw5.v4)) # regression diagnostics
+
+
+write.csv(vw5.v4.out.summary.coeff, file="out/vw5v4outsummary.coeff.csv")
 
 ############### Eliminate outliers to improve the model - on vw5.v4
 ## outlier test - Bonferroni error - within car package
@@ -168,6 +204,7 @@ vw5.v4.out <- lm( Expenditure.Per.Capita ~
 vw5.v4.out.summary.coeff <- as.data.frame(summary(vw5.v4.out)$coefficients[, 1:4])
 
 
+
 ### Generate predicted welfare index based on variables of the model generated through v4 dataset
 hve$predictedwellfare.vw5.v4 <- ( hve$Debt.To.Expenditure * vw5.v4.out.summary.coeff[2,1]) +
   ( hve$House.Crowding * vw5.v4.out.summary.coeff[3,1]) +
@@ -183,7 +220,7 @@ hve$predictedwellfare.vw5.v4 <- ( hve$Debt.To.Expenditure * vw5.v4.out.summary.c
 
 #View(hve$predictedwellfare.vw5.v3)
 ## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
-hve$predictedwellfare.vw5.v4.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v4 , n = 4, style = "fixed", fixedBreaks = c(-10000, 28, 68 , 100))))
+hve$predictedwellfare.vw5.v4.class <- as.factor(findCols(classIntervals(hve$predictedwellfare.vw5.v4 , n = 4, style = "fixed", fixedBreaks = c(-170, 28, 68 , 100, 5000))))
 hve$predictedwellfare.vw5.v4.class <- revalue(hve$predictedwellfare.vw5.v4.class, c(`1` = "Severe", `2` = "High", `3` = "Moderate", `4` = "Low"))
 hve$predictedwellfare.vw5.v4.class  <- factor(hve$predictedwellfare.vw5.v4.class, levels = c("Severe", "High", "Moderate", "Low"))
 

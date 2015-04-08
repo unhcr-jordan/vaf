@@ -2,7 +2,7 @@
 #### Import data & Rename variable
 #source("code/0_import_clean_rename_homevisit3.R")
 
-
+source("code/packages.R")
 ##########################################################################
 # Creation of composite Variable
 ##########################################################################
@@ -238,10 +238,10 @@ hve$Debt.To.Expenditure <- (as.numeric(hve$Poverty.and.Coping.Strategies.What.is
 hve$Debt.Per.Capita <- (as.numeric(hve$Poverty.and.Coping.Strategies.What.is.your.total.amount.of.debt.up.to.now..This.should.include.not.paying.the.rent..etc) /
                           hve$Household.information.Family.Size)
 
-
-
 # Rent occupancy:
 hve$Rent.Occupancy <- ifelse(hve$Payment.Type.of.occupancy..For.rent == "1", 1, 0)
+
+#plot (hve$Rent.Occupancy)
 
 # Rent occupancy sub groups
 hve$Rent.Occupancy.grp1 <- ifelse(hve$Payment.Type.of.occupancy..For.rent == 1, 1, 0)
@@ -262,6 +262,19 @@ hve$Rent.Occupancy.grp5[is.na(hve$Rent.Occupancy.grp5)] <- 0
 
 # Spices & Condiments
 hve$Spices.And.Condiments.Bought.With.Cash <- ifelse(hve$Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash == "1", 1, 0)
+
+
+
+#### Removing records where variables used for the modeling are empty
+hve <- hve[!rowSums(is.na(hve["Debt.To.Expenditure"])), ]
+hve <- hve[!rowSums(is.na(hve["House.Crowding"])), ]
+hve <- hve[!rowSums(is.na(hve["Income.Per.Capita"])), ]
+hve <- hve[!rowSums(is.na(hve["Family.Size"])), ]
+hve <- hve[!rowSums(is.na(hve["Spices.And.Condiments.Bought.With.Cash"])), ]
+hve <- hve[!rowSums(is.na(hve["Rent.Occupancy"])), ]
+
+
+
 
 
 
@@ -397,6 +410,119 @@ hve$Month.Visit <- format(as.Date(as.character(hve$Date.of.Visit.), "%d-%m-%Y"),
 
 # View(hve$Month.Visit)
 
+
+##################################################
+## Re-organise data for th health part.
+##################################################
+
+hve$health.access <- ""
+hve$health.access <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.there.was.a.medical.need..were.you.or.any.of.your.family.members.able.to.access.public.hospitals..clinics.in.the.past.six.months...Yes == 1),
+                            paste0("Yes"), hve$health.access ))
+hve$health.access <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.there.was.a.medical.need..were.you.or.any.of.your.family.members.able.to.access.public.hospitals..clinics.in.the.past.six.months...No == 1),
+                            paste0("No"), hve$health.access ))
+hve$health.access  <- factor(hve$health.access, levels = c("Yes",  "NO"))
+
+
+#### 
+hve$health.where <- ""
+hve$health.where <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.yes..where...Public.clinic..hospital == 1),
+                                       paste0("Public.clinic.hospital"), hve$health.where ))
+hve$health.where <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.yes..where...Private.clinic..hospital == 1),
+                                       paste0("Private.clinic..hospital"), hve$health.where ))
+hve$health.where <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.yes..where...CBOs..NGOs == 1),
+                                      paste0("CBOs.NGOs"), hve$health.where ))
+hve$health.where <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.yes..where...UNHCR.supported.organization..JHAS..Caritas.. == 1),
+                                      paste0("UNHCR.supported.organization.JHAS.Caritas"), hve$health.where ))
+hve$health.where  <- factor(hve$health.where, levels = c("Public.clinic.hospital",  "Private.clinic..hospital",  "CBOs.NGOs",  "UNHCR.supported.organization.JHAS.Caritas"))
+
+####
+hve$health.no <- ""
+hve$health.no <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.no..why...Finances..cost.of.transport..fees..etc.. == 1),
+                                      paste0("Cost.Fees"), hve$health.no ))
+hve$health.no <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.no..why...Documentation..problems.related.to.MOI..service.card.or.UNHCR.certificate.. == 1),
+                                      paste0("Documentation"), hve$health.no ))
+hve$health.no <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.no..why...Relevant.medical.services.were.not.available..specialization.not.available..medication.not.available..etc.. == 1),
+                                      paste0("Availibility"), hve$health.no ))
+hve$health.no <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.no..why...Hospital..clinic.personnel.denied.access.without.clear.reason == 1),
+                                      paste0("Denied.Access"), hve$health.no ))
+hve$health.no <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.no..why...Lack.of.knowledge == 1),
+                                   paste0("Lack.Knowledge"), hve$health.no ))
+hve$health.no <- with(hve, ifelse( ( hve$Access.to.Health.Services.If.no..why...Other == 1),
+                                   paste0("Other"), hve$health.no ))
+hve$health.no  <- factor(hve$health.no, levels = c("Cost.Fees","Documentation","Availibility","Denied.Access","Lack.Knowledge","Other"))
+
+####
+hve$health.breastfed <- ""
+hve$health.breastfed <- with(hve, ifelse( ( hve$Access.to.Health.Services.For.children.between.0..6.months..are.they.breastfed.exclusively...Yes == 1),
+                                       paste0("Yes"), hve$health.breastfed ))
+hve$health.breastfed <- with(hve, ifelse( ( hve$Access.to.Health.Services.For.children.between.0..6.months..are.they.breastfed.exclusively...No == 1),
+                                       paste0("No"), hve$health.breastfed ))
+hve$health.breastfed <- with(hve, ifelse( ( hve$Access.to.Health.Services.For.children.between.0..6.months..are.they.breastfed.exclusively...NA == 1),
+                                          paste0("NA"), hve$health.breastfed ))
+hve$health.breastfed  <- factor(hve$health.breastfed, levels = c("Yes",  "NO",  "NA"))
+
+
+####
+hve$immunized.measles <- ""
+hve$immunized.measles <- with(hve, ifelse( ( hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.measles...Yes == 1),
+                                          paste0("Yes"), hve$immunized.measles ))
+hve$immunized.measles <- with(hve, ifelse( ( hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.measles...No == 1),
+                                          paste0("No"), hve$immunized.measles ))
+hve$immunized.measles <- with(hve, ifelse( ( hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.measles...NA == 1),
+                                          paste0("NA"), hve$immunized.measles ))
+hve$immunized.measles  <- factor(hve$immunized.measles, levels = c("Yes",  "NO",  "NA"))
+
+
+####
+hve$immunized.polio <- ""
+hve$immunized.polio <- with(hve, ifelse( ( hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.polio..child.who.never.had.a.polio.dose..Yes == 1),
+                                           paste0("Yes"), hve$immunized.polio ))
+hve$immunized.polio <- with(hve, ifelse( ( hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.polio..child.who.never.had.a.polio.dose..No == 1),
+                                           paste0("No"), hve$immunized.polio ))
+hve$immunized.polio <- with(hve, ifelse( ( hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.polio..child.who.never.had.a.polio.dose..NA == 1),
+                                           paste0("NA"), hve$immunized.polio ))
+hve$immunized.polio  <- factor(hve$immunized.polio, levels = c("Yes",  "NO",  "NA"))                                                                                                                                                                   
+
+####
+hve$immunized.vaccination.card <- ""
+hve$immunized.vaccination.card <- with(hve, ifelse( ( hve$Vaccination.If.you.have.children.under.2.years..have.they.received.routine.vaccines..EPI..proxy...question.such.as..do.you.have.children.under.2.who.have.a.vaccination.card....Yes == 1),
+                                         paste0("Yes"), hve$immunized.vaccination.card ))
+hve$immunized.vaccination.card <- with(hve, ifelse( ( hve$Vaccination.If.you.have.children.under.2.years..have.they.received.routine.vaccines..EPI..proxy...question.do.you.have.children.under.2.who.have.a.vaccination.card....No == 1),
+                                         paste0("No"), hve$immunized.vaccination.card ))
+hve$immunized.vaccination.card <- with(hve, ifelse( ( hve$Vaccination.If.you.have.children.under.2.years..have.they.received.routine.vaccines..EPI..proxy...question.such.as..do.you.have.children.under.2.who.have.a.vaccination.card....NA == 1),
+                                         paste0("NA"), hve$immunized.vaccination.card ))
+hve$immunized.vaccination.card  <- factor(hve$immunized.vaccination.card, levels = c("Yes",  "NO",  "NA"))                                                                                                                                     
+
+####
+hve$chronic.diseases <- ""
+hve$chronic.diseases <- with(hve, ifelse( ( hve$Age.and.Disability.Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases..impairments..dishabilles...Yes == 1),
+                                                    paste0("Yes"), hve$chronic.diseases ))
+hve$chronic.diseases <- with(hve, ifelse( ( hve$Age.and.Disability.Are.your.family.members..in.the.same.file..suffering.from.chronic.diseases..impairments..dishabilles...No == 1),
+                                                    paste0("No"), hve$chronic.diseases ))
+hve$chronic.diseases  <- factor(hve$chronic.diseases, levels = c("Yes",  "NO")) 
+
+
+
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Pregnant.females.with.complications..UNHCR.."                                                                                                          
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Visual..hearing.impairment"                                                                                                                            
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Other.physical.disability"                                                                                                                             
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Mental.disability"                                                                                                                                     
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Intellectual.disability"                                                                                                                               
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Temporary.injured"                                                                                                                                     
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Chronically.ill.or.serious.medical.condition"                                                                                                          
+# "Age.and.Disability.details.How.many.of.the.following.are.part.of.your.family..in.the.same.file....Other.people.in.need.of.support.to.do.daily.activities"                                                                                                
+# "Age.and.Disability.details.Visual..hearing.impairment.Partial"                                                                                                                                                                                           
+# "Age.and.Disability.details.Visual..hearing.impairment.Complete"                                                                                                                                                                                          
+
+#"Age.and.Disability.details.Age...0..17.years.old"                                                                                                                                                                                                        
+# "Age.and.Disability.details.Age...18..60.years.old"                                                                                                                                                                                                       
+# "Age.and.Disability.details.Age...61.years.and.above"                                                                                                                                                                                                     
+
+# "Age.and.Disability.details.Number.of.the.disability.in.the.same.age.group.."      
+
+
+### Remove records withtout dataset info --
+hve <- hve[!rowSums(is.na(hve["dataset"])), ]
 
 
 write.csv(hve, file="out/hve.csv")

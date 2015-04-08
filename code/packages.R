@@ -4,7 +4,8 @@
 #"maptools","rgdal","rgeos","ggmap","sp","hexbin",")
 #install.packages(pkgs=lab.packages)
 
-packages <- c(  "lme4", "lmtest", "car", ## used for regressions
+packages <- c( "doBy",
+               "lme4", "lmtest", "car", ## used for regressions
               "ggplot2", # package for elegant data visualization using the Grammar of Graphics
               "Hmisc", # generate a detailled describtion of a given dataset 
               "AER",  # interesting datasets
@@ -42,6 +43,7 @@ if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
 rm(packages)
 
 # loads packages into memory
+library(doBy)
 library(lattice)
 #library(gmodels)
 library(car)

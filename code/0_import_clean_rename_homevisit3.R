@@ -60,8 +60,7 @@ homevisit.v4.r$dataset <- "homevisit4"
 
 homevisit <- rbind(homevisit.v4.r, homevisit.v3.r)
 
-### Remove records withtout dataset info --
-homevisit <- homevisit[!rowSums(is.na(homevisit["dataset"])), ]
+
 #hve.na <-hve[ is.na(homevisit$dataset),  ]
 
 
@@ -159,8 +158,8 @@ homevisit <- homevisit [!(homevisit$Type.of.Housing.Number.of.rooms.excluding.th
 homevisit <- homevisit [!(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities. >= 10),]
 
 
-#View(vafbaseline$Volunteer..Case.Status...Available) ##  not present in Df... 
-#vafbaseline <- vafbaseline [!(vafbaseline$Volunteer..Case.Status...Available==0),]
+#View(homevisit$Volunteer..Case.Status...Available) ##  not present in Df... 
+homevisit <- homevisit [!(homevisit$Volunteer..Case.Status...Reachable == 0),]
 
 
 

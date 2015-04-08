@@ -150,8 +150,8 @@ bar.Expenditure.Per.Capita.class <- ggplot(data=hve,
   geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
   # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
-  coord_flip()+
-  xlab("Class") + 
+  # coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
   ylab("# of Ind") +
   ggtitle("Expenditure.Per.Capita.class")
 ggsave("out/barExpenditurePerCapitaclass.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
@@ -269,7 +269,7 @@ bar.predictedwellfare.vw5.v4.class <- ggplot(data=hve,
   # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
   #coord_flip()+
-  xlab("Class") + 
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
   ylab("# of Ind") +
   ggtitle("predictedwellfare.vw5.v4.class")
 ggsave("out/barpredictedwellfarevw5v4class.png", bar.predictedwellfare.vw5.v4.class, width=8, height=6,units="in", dpi=300)
@@ -282,10 +282,15 @@ bar.predictedwellfare.vw5.v3.class <- ggplot(data=hve,
   # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
   #coord_flip()+
-  xlab("Class") + 
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
   ylab("# of Ind") +
   ggtitle("predictedwellfare.vw5.v3.class")
 ggsave("out/barpredictedwellfarevw5v3class.png", bar.predictedwellfare.vw5.v3.class, width=8, height=6,units="in", dpi=300)
+
+
+
+
+
 
 
 

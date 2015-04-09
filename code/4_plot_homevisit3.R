@@ -122,8 +122,8 @@ histo.expenditurecapita <- ggplot(hve, aes(x=hve$Expenditure.Per.Capita)) +
 ggsave("out/histogram-expenditurecapita.png", histo.expenditurecapita, width=8, height=6,units="in", dpi=300)
 
 
-## Doing the same but facetting on Gov_NAME  -- Governorates
-boxplot.expenditurecapita.gov <- ggplot(hve, aes(x=Gov_NAME, y=Expenditure.Per.Capita, fill=Gov_NAME)) +
+## Doing the same but facetting on adm1_name  -- Governorates
+boxplot.expenditurecapita.gov <- ggplot(hve, aes(x=adm1_name, y=Expenditure.Per.Capita, fill=adm1_name)) +
   geom_boxplot() +
   guides(fill=FALSE) +
   ggtitle("Boxplot: Comparison of expenditure per capita")
@@ -138,7 +138,7 @@ histo.expenditurecapita.gov <- ggplot(hve, aes(x=hve$Expenditure.Per.Capita)) +
                  colour="dark blue", fill="light blue", alpha = .2) +
   geom_density(col =2, alpha=.2, fill="#FF6666") + 
   geom_vline(aes(xintercept=mean(Expenditure.Per.Capita, na.rm=T)), color="red", linetype="dashed", size=1) + 
-  facet_grid(Gov_NAME ~ .) +
+  facet_grid(adm1_name ~ .) +
   labs(x="Expenditure per capita", y="Count of cases")  +
   ggtitle("Histogramm for Expenditure per capita per Governorate")
 ggsave("out/histogram-expenditurecapitagov.png", histo.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
@@ -174,14 +174,14 @@ histo.ln.expenditurecapita <- ggplot(hve, aes(x=hve$ln.Expenditure.Per.Capita)) 
 ggsave("out/histogram-lnexpenditurecapita.png", histo.ln.expenditurecapita, width=8, height=6,units="in", dpi=300)
 
 
-## Doing the same but facetting on Gov_NAME  -- Governorates
+## Doing the same but facetting on adm1_name  -- Governorates
 histo.ln.expenditurecapita.gov <- ggplot(hve, aes(x=hve$ln.Expenditure.Per.Capita)) + 
   geom_histogram(aes(y =..density..),
                  #binwidth=.5, 
                  colour="dark blue", fill="light blue", alpha = .2) +
   geom_density(col =2, alpha=.2, fill="#FF6666") + 
   geom_vline(aes(xintercept=mean(ln.Expenditure.Per.Capita, na.rm=T)), color="red", linetype="dashed", size=1) + 
-  facet_grid(Gov_NAME ~ .) +
+  facet_grid(adm1_name ~ .) +
   labs(x="log Expenditure per capita")  +
   ggtitle("Histogramm for ln.Expenditure per capita per Governorate")
 ggsave("out/histogram-expenditurecapitagovln.png", histo.ln.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)

@@ -66,10 +66,12 @@ homevisit.v4.r$dataset <- "homevisit4"
 
 homevisit.all <- rbind(homevisit.v4.r, homevisit.v3.r)
 
-homevisit <- homevisit.all <-
-#hve.na <-hve[ is.na(homevisit$dataset),  ]
+homevisit.all$dataset <- as.factor(homevisit.all$dataset)
+#levels(homevisit.all$dataset)
 
+summary(homevisit.all$dataset)
 
+homevisit <- homevisit.all 
 
 
 ## Remark for analysis in stata variables names shoudl be less 32 characters -- might need to rename a second time
@@ -93,16 +95,18 @@ homevisit <-homevisit[(homevisit["long"] <= 40 ), ]
 homevisit <-homevisit[(homevisit["long"] >= 34 ), ]
 # str(homevisit)
 
+summary(homevisit$dataset)
 
 ####### Recover correct Governorate & district using the coordinates
 source("code/geo.R")
 
 ### Spatial join on district 
 ## getting correct district and gov from coordinates
-districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
-#districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
+#districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
+districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
 
-names(districtgeo)
+plot(districtgeo)
+#names(districtgeo)
 
 ## Create a spatial data frame with vaf records
 rm(datasp)
@@ -120,19 +124,23 @@ datasp1@data$id <- rownames(datasp1@data)
 rm(correct)
 #View(districtgeo@data)
 
-correct <- datasp1@data[ ,c("id","district_c","district","Gov_NAME","Gov_code" )]
+#correct <- datasp1@data[ ,c("id","district_c","district","Gov_NAME","Gov_code" )]
 
-#correct <- datasp1@data[ ,c("gid","adm0_code" , "adm0_name"  , "adm1_name" , "adm1_code", "adm2_name_alt", 
-#                            "adm3_pop_2",    "adm3_name",    "adm3_code"  ,   "adm2_code" ,    "adm2_name"  ,
-#                            "poverty_ra"  ,  "population" ,   "no_of_poor",    "rattio" ,  "adm1_nam" ,    
-#                             "adm1_nam_alt",  "adm1_pro",      "adm2_nam",      "adm2_nam_alt",  "adm2_pro", 
-#                            "adm3_nam" ,     "adm3_pro" ,     "adm1_old"  ,  "adm2_old"  ,    "adm3_old"  ,
-#                            "adm1_ar" ,      "adm2_ar" ,      "adm3_ar"  ,     "level1_cap"  ,  "level2_cap" )]
+correct <- datasp1@data[ ,c( "gid" , "adm1_name" , "adm1_nam",    "adm1_code",  "adm1_pro", 
+                             "adm2_name", "adm2_nam", "adm2_code", "adm2_pro", 
+                             "adm3_name", "adm3_nam", "adm3_code", "adm3_pro",
+                             "Pov_2008",   "Pov_2006" ,  "Pov_2002" ,  "Pov_2010"  )]
+
 homevisit$id <- rownames(homevisit)
-homevisit <- merge(x=homevisit, y=correct, by="id")
-#homevisit <- merge(x=homevisit, y=correct, by.x="id", by.y="gid")
-rm(correct)
+correct$id <- rownames(correct)
 
+homevisit.geo <- homevisit
+summary(homevisit.geo$dataset)
+
+#homevisit <- merge(x=homevisit, y=correct, by="id")
+homevisit <- merge(x=homevisit.geo, y=correct, by="id")
+#rm(correct)
+summary(homevisit$dataset)
 ## Let's create distinc variables for each records on gov
 
 
@@ -175,4 +183,5 @@ homevisit <- homevisit [!(homevisit$Financial.Situation.Total.Expenditure==0),]
 homevisit <- homevisit [!(homevisit$Financial.Situation.Total.Expenditure > 1000),]
 
 
-
+#levels(homevisit$dataset)
+summary(homevisit$dataset)

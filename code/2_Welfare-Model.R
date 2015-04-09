@@ -31,9 +31,13 @@ library(ggplot2)
 ######### First step subset the dataframe in order to keep the column that make snese for the regression.
 
 hve.model <- hve
+levels(hve.model$dataset)
+
+summary(hve.model$dataset)
 names(hve.model)
 
-hve.model3 <-hve[ hve$dataset == "homevisit3", c("Expenditure.Per.Capita",
+
+hve.model3 <-hve.model[ hve.model$dataset == "homevisit3", c("Expenditure.Per.Capita",
                                                  "Debt.To.Expenditure",
                                                  "House.Crowding",
                                                  "House.Crowding.Squared",
@@ -44,7 +48,7 @@ hve.model3 <-hve[ hve$dataset == "homevisit3", c("Expenditure.Per.Capita",
                                                  "Spices.And.Condiments.Bought.With.Cash",
                                                  "Rent.Occupancy")  ]
 
-hve.model4 <-hve[ hve$dataset == "homevisit4", c("Expenditure.Per.Capita",
+hve.model4 <-hve.model[ hve.model$dataset == "homevisit4", c("Expenditure.Per.Capita",
                                                  "Debt.To.Expenditure",
                                                  "House.Crowding",
                                                  "House.Crowding.Squared",
@@ -251,15 +255,27 @@ hve$predictedwellfare.vw5.v4.class  <- factor(hve$predictedwellfare.vw5.v4.class
 
 #names(hve)
 
-mapextract <- hve[, c(
-  "lat",                                                                                                                                                                                                                                                     
-   "long"  ,                                                                                                                                                                                                                                                  
-  "district_c" ,                                                                                                                                                                                                                                             
-   "district" ,                                                                                                                                                                                                                                               
-   "Gov_NAME" ,  
-  "case.size.vaf",
-  "Coping.Strategies.Basic.Food.Needs",
-  "Gov_code" ,
+mapextract <- hve[ , c(
+  "lat" ,                                                                                                                                                                                                                                                     
+  "long" ,
+  "adm1_name" ,                                                                                                                                                                                                                                              
+   "adm1_nam"    ,                                                                                                                                                                                                                                            
+   "adm1_code"    ,                                                                                                                                                                                                                                           
+   "adm1_pro"      ,                                                                                                                                                                                                                                          
+   "adm2_name"     ,                                                                                                                                                                                                                                          
+   "adm2_nam"       ,                                                                                                                                                                                                                                         
+   "adm2_code"     ,                                                                                                                                                                                                                                          
+   "adm2_pro"       ,                                                                                                                                                                                                                                         
+   "adm3_name"     ,                                                                                                                                                                                                                                          
+   "adm3_nam"     ,                                                                                                                                                                                                                                           
+   "adm3_code"    ,                                                                                                                                                                                                                                           
+   "adm3_pro"     ,                                                                                                                                                                                                                                           
+  "Pov_2008"    ,                                                                                                                                                                                                                                            
+  "Pov_2006"    ,                                                                                                                                                                                                                                            
+  "Pov_2002"     ,                                                                                                                                                                                                                                           
+  "Pov_2010"   ,
+  "case.size.vaf" ,
+  "Coping.Strategies.Basic.Food.Needs" ,
    "Expenditure.Per.Capita" ,                                                                                                                                                                                                                                 
    "Expenditure.Per.Capita.class"  ,
    "predictedwellfare.vw5.v3" ,                                                                                                                                                                                                                               

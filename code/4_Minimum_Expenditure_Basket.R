@@ -50,7 +50,7 @@ ggsave("out/meb/boxplot_rent_familysize.png", boxplot.rent.familysize, width=8, 
 rm(boxplot.rent.familysize)
 
 ### Per Gov
-boxplot.expenditurerent.gov <- ggplot(hve, aes(x=Gov_NAME, y=Exp_Rent_portion, fill=Gov_NAME)) +
+boxplot.expenditurerent.gov <- ggplot(hve, aes(x=adm1_name, y=Exp_Rent_portion, fill=adm1_name)) +
                                       geom_boxplot() +
                                       guides(fill=FALSE) +
                                       ggtitle("Boxplot: Comparison of Rent per Governorate")

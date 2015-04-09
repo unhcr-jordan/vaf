@@ -524,6 +524,8 @@ hve$chronic.diseases  <- factor(hve$chronic.diseases, levels = c("Yes",  "NO"))
 ### Remove records withtout dataset info --
 hve <- hve[!rowSums(is.na(hve["dataset"])), ]
 
+#hve$dataset <- as.factor(hve$dataset)
+#levels(hve$dataset)
 
 write.csv(hve, file="out/hve.csv")
 

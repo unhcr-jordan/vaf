@@ -204,7 +204,7 @@ testfit.vw5.v3 <- ggplot(hve, aes(x=predictedwellfare.vw5.v3, y=Expenditure.Per.
         axis.title.y=element_text(size=15),
         plot.title=element_text(size=17)) +
   scale_y_continuous(name="Expenditure.Per.Capita") +
-  scale_x_continuous("predictedwellfare.vw5.v3") +
+  scale_x_continuous("Predictedwellfare-vw5 based on Home Visit 3") +
   geom_abline(intercept=0, slope=1, colour="yellow") +
   stat_smooth(se=FALSE)
 ggsave("out/testfit_vw5_v3.png", testfit.vw5.v3, width=8, height=6,units="in", dpi=300)
@@ -219,7 +219,7 @@ testfit.vw5.v4 <- ggplot(hve, aes(x=predictedwellfare.vw5.v4, y=Expenditure.Per.
         axis.title.y=element_text(size=15),
         plot.title=element_text(size=17)) +
   scale_y_continuous(name="Expenditure.Per.Capita") +
-  scale_x_continuous("predictedwellfare.vw5.v4") +
+  scale_x_continuous("Predictedwellfare-vw5 based on Home Visit 4") +
   geom_abline(intercept=0, slope=1, colour="yellow") +
   stat_smooth(se=FALSE)
 ggsave("out/testfit_vw5_v4.png", testfit.vw5.v4, width=8, height=6,units="in", dpi=300)
@@ -239,7 +239,7 @@ histo.predictedwellfare.vw5.v3 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v3
   geom_vline(aes(xintercept=mean(predictedwellfare.vw5.v3, na.rm=T)), color="red", linetype="dashed", size=1) + 
   facet_grid(dataset ~ .) +
   labs(x="Expenditure per capita", y="Count of cases")  +
-  ggtitle("Histogramm for Predicted expenditure per capita based on v3")
+  ggtitle("Histogramm for Predicted Expenditure per Capita based on v3")
 ggsave("out/histogram-predictedwellfarevw5v3.png", histo.predictedwellfare.vw5.v3, width=8, height=6,units="in", dpi=300)
 
 summary(hve$predictedwellfare.vw5.v4)
@@ -253,7 +253,7 @@ histo.predictedwellfare.vw5.v4 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v4
   geom_vline(aes(xintercept=mean(predictedwellfare.vw5.v4, na.rm=T)), color="red", linetype="dashed", size=1) + 
   facet_grid(dataset ~ .) +
   labs(x="Expenditure per capita", y="Count of cases")  +
-  ggtitle("Histogramm for Predicted expenditure per capita based on v4")
+  ggtitle("Histogramm for Predicted Expenditure per Capita based on v4")
 ggsave("out/histogram-predictedwellfarevw5v4.png", histo.predictedwellfare.vw5.v4, width=8, height=6,units="in", dpi=300)
 
 
@@ -271,7 +271,7 @@ bar.predictedwellfare.vw5.v4.class <- ggplot(data=hve,
   #coord_flip()+
   xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
   ylab("# of Ind") +
-  ggtitle("predictedwellfare.vw5.v4.class")
+  ggtitle("Predictedwellfare-vw5 class based on Home Visit 4")
 ggsave("out/barpredictedwellfarevw5v4class.png", bar.predictedwellfare.vw5.v4.class, width=8, height=6,units="in", dpi=300)
 
 
@@ -283,15 +283,10 @@ bar.predictedwellfare.vw5.v3.class <- ggplot(data=hve,
   guides(fill=FALSE) + 
   #coord_flip()+
   xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
-  ylab("# of Ind") +
-  ggtitle("predictedwellfare.vw5.v3.class")
+  ylab("# of Ind") ++ 
+  scale_y_continuous(labels = percent_format())
+  ggtitle("Predictedwellfare-vw5 class based on Home Visit 3")
 ggsave("out/barpredictedwellfarevw5v3class.png", bar.predictedwellfare.vw5.v3.class, width=8, height=6,units="in", dpi=300)
-
-
-
-
-
-
 
 
 

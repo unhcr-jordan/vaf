@@ -27,7 +27,13 @@ names(homevisit.v3) <- label.v3[, 3]
 ##############################################################
 ## Home visit 4  doing the same with the variable dictionnary
 
+#
 homevisit.v4 <- read.csv("data/Home_visit_4.csv", skip=1)
+
+#homevisit.v41 <- read.csv("data/Home_visit_4_1.csv", skip=1)
+#write.csv(names(homevisit.v40), file="out/labelv40.csv")
+#write.csv(names(homevisit.v41), file="out/labelv41.csv")
+
 label.v4 <- read.delim("data/homevisit4_label.tsv", stringsAsFactors=FALSE)
 ## Remove the lines from the dictionnary that are not in v4
 label.v4.only <- label.v4[ (label.v4$v4=="yes"), ]
@@ -58,9 +64,9 @@ homevisit.v4.r$dataset <- "homevisit4"
 # rm(label.onlyv3)
 # rm(label.onlyv4)
 
-homevisit <- rbind(homevisit.v4.r, homevisit.v3.r)
+homevisit.all <- rbind(homevisit.v4.r, homevisit.v3.r)
 
-
+homevisit <- homevisit.all <-
 #hve.na <-hve[ is.na(homevisit$dataset),  ]
 
 

@@ -213,7 +213,7 @@ rm(hve.exp.severe)
 
 ## Using faceting for expenditure level
 
-rm(map.expenditure,n)
+rm(map.expenditure.n)
 map.expenditure.n <- northeroad
 map.expenditure.n <- map.expenditure.n +
   stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 

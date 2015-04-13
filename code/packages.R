@@ -6,7 +6,7 @@
 
 packages <- c( "doBy",
                "lme4", "lmtest", "car", ## used for regressions
-              "ggplot2", # package for elegant data visualization using the Grammar of Graphics
+              "ggplot2", "grid", # package for elegant data visualization using the Grammar of Graphics
               "Hmisc", # generate a detailled describtion of a given dataset 
               "AER",  # interesting datasets
               "lattice", 
@@ -52,6 +52,8 @@ library(lmtest)
 
 library(plyr)
 library(ggplot2) ## The grammar of graphics!
+library(grid)
+
 library(extrafont) ## Additional fonts
 library(ggthemes) ## Additional themes for gplot2
 library(zoo) ## Manage reformatting of date
@@ -205,3 +207,68 @@ IntersectPtWithPoly <- function(x, y) {
 }
 
 
+###colorblind-friendly palette: http://jfly.iam.u-tokyo.ac.jp/color/
+## These are color-blind-friendly palettes, one with gray, and one with black.
+# To use with ggplot2, it is possible to store the palette in a variable, then use it later.
+
+# The palette with grey:
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+# The palette with black:
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+#Define color palette / black and white  
+gs.pal <- colorRampPalette(c("#FFFFFF","#000000"), bias=.1, space="rgb")
+
+# To use for fills, add
+#scale_fill_manual(values=cbPalette)
+
+# To use for line and point colors, add
+#scale_colour_manual(values=cbPalette)
+
+
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}

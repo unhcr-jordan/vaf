@@ -25,6 +25,13 @@ require(ggplot2)
 #bounding <- bbox(datsp)
 jordanbox <- c(34.8, 29.1, 39.5, 33.5) 
 
+
+### Bounding can also be done in the ggplot2 object through the following
+
+#  scale_x_continuous(limits = c(34.8, 39.5)) +
+#  scale_y_continuous(limits = c(29.1, 33.5)) +
+
+
 ## Center on north 32.2607107,36.5205146,9
 
 
@@ -55,26 +62,6 @@ stamenet <- ggmap(stamen)
 #mapbox <- getmapbox_map(center = c(lng = 37.22, lat = 31.32),  mapbox = "unhcr.map-ohec27wu", zoom = 8, size = 640, filename = "map.png")
 #mapboxback <- map_png(mapbox)
 
-########################################
-### Simple map background with governorate
-
-jor_adm1 <- readOGR("geo/admin1.geojson", "OGRGeoJSON")
-#plot(jor_adm1)
-# Fortify them
-jor_adm1@data$id = rownames(jor_adm1@data)
-rm(jor_adm1_f)
-jor_adm1_f <- fortify(jor_adm1, region="id")
-jor_adm1_f <-join(jor_adm1_f, jor_adm1@data, by="id")
-
-rm(maplevel1)
-maplevel1 <-  ggplot(jor_adm1_f, aes(long, lat)) + 
-  coord_equal() +
-  geom_polygon(data = jor_adm1_f, aes(x = long, y = lat, group = group), alpha = 0.5) +
- # geom_text(aes(label = short, x = Longitude_c, y = Latitude_c, group = group)) + #add labels at centroids
-  geom_path(data = jor_adm1_f, aes(x = long, y = lat, group = group), color="white")+
-  ggtitle("Governorates of Jordan") +
-  theme_bw()
-ggsave("out/maplevel1.png", maplevel1, width=8, height=6,units="in", dpi=300)
 
 
 ###############################################################
@@ -87,6 +74,8 @@ map_obs <- map_obs +
              size=1, alpha = 1/10)+
   labs(x = "Longitude", y = "Latitude") +
   ggtitle("Home Visit") +
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   theme_bw()
 ggsave("out/map_obs.png", map_obs, width=8, height=6,units="in", dpi=300)
 rm(map_obs)
@@ -103,6 +92,8 @@ map.familysize.all <- map.familysize.all +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Household.information.Family.Size") +
   ggtitle("Home Visit Analysis ")
@@ -126,6 +117,8 @@ map.exp.severe <- map.exp.severe +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Severe - # of Ind ") +
   ggtitle("Home Visit Analysis- Expenditure.Per.Capita. Severe ")
@@ -144,6 +137,8 @@ map.exp.high <- map.exp.high +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "High - # of Ind ") +
   ggtitle("Home Visit Analysis- Expenditure.Per.Capita. High ")
@@ -162,6 +157,8 @@ map.exp.moderate <- map.exp.moderate +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Moderate - # of Ind ") +
   ggtitle("Home Visit Analysis- Expenditure.Per.Capita Moderate ")
@@ -180,6 +177,8 @@ map.exp.low <- map.exp.low +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Low - # of Ind ") +
   ggtitle("Home Visit Analysis- Expenditure.Per.Capita Low ")
@@ -311,6 +310,8 @@ map.permanent.shelter <- map.permanent.shelter +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
   ggtitle("Home Visit Analysis- permanent.shelter ")
@@ -348,6 +349,8 @@ map.transitional.shelter <- map.transitional.shelter +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Low - # of Ind ") +
   ggtitle("Home Visit Analysis- transitional.shelter ")
@@ -384,6 +387,8 @@ map.temporary.shelter <- map.temporary.shelter +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Low - # of Ind ") +
   ggtitle("Home Visit Analysis- temporary.shelter ")
@@ -410,7 +415,27 @@ rm(hve.temporary.shelter)
 
 
 #################################
-## Trying the same on Predicted Welfare score for v3
+## Faceting on Predicted Welfare score for v3
+
+
+rm(map.predictedwellfare.vw5.v3.class)
+map.predictedwellfare.vw5.v3.class <- googleeroad
+map.predictedwellfare.vw5.v3.class <- map.predictedwellfare.vw5.v3.class +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
+  facet_grid( . ~ predictedwellfare.vw5.v3.class ) +
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- Predicted Expenditure level - based on V3 ")
+ggsave("out/map-predictedwellfare_vw5_v3_class.png", map.predictedwellfare.vw5.v3.class, width=8, height=6,units="in", dpi=300)
+rm(map.predictedwellfare.vw5.v3.class)
+
 rm(hve.severe.v3)
 hve.severe.v3 <- hve[ which(hve$predictedwellfare.vw5.v3.class == "Severe"), ]
 rm(map.severe.v3)
@@ -422,6 +447,8 @@ map.severe.v3 <- map.severe.v3 +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Household.information.Family.Size for Severe welfare Cat") +
   ggtitle("Home Visit Analysis ")
@@ -430,7 +457,27 @@ rm(map.severe.v3)
 rm(hve.severe.v3)
 
 #################################
-## Trying the same on Predicted Welfare score for v3
+## Trying the same on Predicted Welfare score for v4
+
+rm(map.predictedwellfare.vw5.v4.class)
+map.predictedwellfare.vw5.v4.class <- googleeroad
+map.predictedwellfare.vw5.v4.class <- map.predictedwellfare.vw5.v4.class +
+  stat_summary_hex(aes(x= long, y= lat, z = case.size.vaf), 
+                   data=hve, 
+                   fun = sum,
+                   bins=50,
+                   alpha = 9/10) +
+  theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
+  facet_grid( . ~ predictedwellfare.vw5.v4.class ) +
+  scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
+  labs(x = "Longitude", y = "Latitude", fill = "# of Ind ") +
+  ggtitle("Home Visit Analysis- Predicted Expenditure level - based on v4 ")
+ggsave("out/map-predictedwellfare_vw5_v4_class.png", map.predictedwellfare.vw5.v4.class, width=8, height=6,units="in", dpi=300)
+rm(map.predictedwellfare.vw5.v4.class)
+
+
 hve.severe.v4 <-hve[ which(hve$predictedwellfare.vw5.v4.class == "Severe"), ]
 rm(map.severe.v4)
 map.severe.v4 <- googleeroad
@@ -441,6 +488,8 @@ map.severe.v4 <- map.severe.v4 +
                    bins=50,
                    alpha = 9/10) +
   theme_bw() + 
+  scale_x_continuous(limits = c(34.8, 39.5)) +
+  scale_y_continuous(limits = c(29.1, 33.5)) +
   scale_fill_gradient(low = "#ffffcc", high = "#ff4444") +
   labs(x = "Longitude", y = "Latitude", fill = "Household.information.Family.Size for Severe welfare Cat") +
   ggtitle("Home Visit Analysis ")

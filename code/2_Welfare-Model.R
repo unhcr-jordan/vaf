@@ -255,35 +255,4 @@ hve$predictedwellfare.vw5.v4.class  <- factor(hve$predictedwellfare.vw5.v4.class
 
 #names(hve)
 
-mapextract <- hve[ , c(
-  "lat" ,                                                                                                                                                                                                                                                     
-  "long" ,
-  "adm1_name" ,                                                                                                                                                                                                                                              
-   "adm1_nam"    ,                                                                                                                                                                                                                                            
-   "adm1_code"    ,                                                                                                                                                                                                                                           
-   "adm1_pro"      ,                                                                                                                                                                                                                                          
-   "adm2_name"     ,                                                                                                                                                                                                                                          
-   "adm2_nam"       ,                                                                                                                                                                                                                                         
-   "adm2_code"     ,                                                                                                                                                                                                                                          
-   "adm2_pro"       ,                                                                                                                                                                                                                                         
-   "adm3_name"     ,                                                                                                                                                                                                                                          
-   "adm3_nam"     ,                                                                                                                                                                                                                                           
-   "adm3_code"    ,                                                                                                                                                                                                                                           
-   "adm3_pro"     ,                                                                                                                                                                                                                                           
-  "Pov_2008"    ,                                                                                                                                                                                                                                            
-  "Pov_2006"    ,                                                                                                                                                                                                                                            
-  "Pov_2002"     ,                                                                                                                                                                                                                                           
-  "Pov_2010"   ,
-  "case.size.vaf" ,
-  "Coping.Strategies.Basic.Food.Needs" ,
-   "Expenditure.Per.Capita" ,                                                                                                                                                                                                                                 
-   "Expenditure.Per.Capita.class"  ,
-   "predictedwellfare.vw5.v3" ,                                                                                                                                                                                                                               
-   "predictedwellfare.vw5.v3a"  ,                                                                                                                                                                                                                             
-   "predictedwellfare.vw5.v3.class"  ,                                                                                                                                                                                                                        
-   "predictedwellfare.vw5.v4"   ,                                                                                                                                                                                                                             
-   "predictedwellfare.vw5.v4b" ,                                                                                                                                                                                                                              
-   "predictedwellfare.vw5.v4.class"   
-  )]
 
-write.csv(mapextract, file="out/mapextract.csv")

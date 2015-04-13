@@ -105,7 +105,7 @@ source("code/geo.R")
 #districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
 districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
 
-plot(districtgeo)
+#plot(districtgeo)
 #names(districtgeo)
 
 ## Create a spatial data frame with vaf records

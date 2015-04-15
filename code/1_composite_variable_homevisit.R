@@ -405,6 +405,21 @@ hve$Exp_total <- as.numeric(as.character(hve$Financial.Situation.Total.Expenditu
 
 ## Change date format
 hve$HV_Date <- as.Date(as.character(hve$Date.of.Visit.), "%d-%m-%Y")
+hve$start1 <- as.Date(as.character(hve$start), "%d-%m-%Y")
+hve$end1 <- as.Date(as.character(hve$end), "%d-%m-%Y")
+
+summary(hve$HV_Date)
+summary(hve$start1)
+summary(hve$end1)
+
+## Look for records who were recorded before 2014
+hve.date.start <- hve[(hve$start1 <= "2014-01-01"), c("HV_Date", "start1", "end1") ]
+hve.date.hv.low <- hve[(hve$HV_Date <= "2014-01-01"), c("HV_Date", "start1", "end1") ]
+hve.date.hv.high <- hve[(hve$HV_Date >= "2015-04-01"), c("HV_Date", "start1", "end1") ]
+
+
+summary(hve[(hve$HV_Date >= "2014-01-01"), ]$HV_Date)
+
 ## Get month only  
 hve$Month.Visit <- format(as.Date(as.character(hve$Date.of.Visit.), "%d-%m-%Y"), "%m-%Y")
 

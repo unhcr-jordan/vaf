@@ -1,3 +1,8 @@
+####################################################################################
+#### Apply MCA (Multiple Correspondance Analysis) to Categorical data
+####################################################################################
+## http://rpubs.com/gaston/MCA
+
 #### Loading the required R module
 library("FactoMineR")
 
@@ -18,9 +23,7 @@ homevisit1 <- homevisit6min[, c( "food","household","water","sanitation","shelty
 
 
 
-##############
-#### Apply MCA (Multiple Correspondance Analysis) to Categorical data
-##############
+
 
 homevisit1.mca<-MCA(homevisit1)
 summary(homevisit1.mca)

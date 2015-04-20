@@ -257,6 +257,23 @@ histo.predictedwellfare.vw5.v4 <- ggplot(hve, aes(x=hve$predictedwellfare.vw5.v4
 ggsave("out/histogram-predictedwellfarevw5v4.png", histo.predictedwellfare.vw5.v4, width=8, height=6,units="in", dpi=300)
 
 
+
+#### Applying only to the same popolation
+hve.4 <-hve[ hve$dataset == "homevisit4",   ]
+bar.predictedwellfare.4.vw5.v4.class <- ggplot(data=hve.4, 
+                                             aes(x=predictedwellfare.vw5.v4.class , y=case.size.vaf)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  #coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
+  ylab("# of Ind") +
+  ggtitle("Predictedwellfare-vw5.v4 class applied to Home Visit 4")
+ggsave("out/barpredictedwellfare4vw5v4class.png", bar.predictedwellfare.4.vw5.v4.class, width=8, height=6,units="in", dpi=300)
+
+
+
+
 ##################
 #hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue", main = "Histogram of Welfare Model -vw5- estimated on V4 dataset", xlab = "Expected welfare Score ")
 #hist(hve$predictedwellfare.vw5.v3, breaks=c(-105, 28, 68 , 100, 1000), border = "dark blue", col = "light blue", main = "Histogram of Welfare Model -vw5- estimated on V3 dataset", xlab = "Expected welfare Score ")

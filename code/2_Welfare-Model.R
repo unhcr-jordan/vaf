@@ -143,7 +143,8 @@ vw5.v3.influence <- as.data.frame( influence(vw5.v3)) # regression diagnostics
 hve$predictedwellfare.vw5.v3  <- predict(vw5.v3, newdata=hve) 
 
 ### Generate predicted welfare index based on variables of the model generated through v3 dataset
-hve$predictedwellfare.vw5.v3a <- ( hve$Debt.To.Expenditure * vw5.v3.out.summary.coeff[2,1]) +
+hve$predictedwellfare.vw5.v3a <- vw5.v3.out.summary.coeff[1,1] +  
+  ( hve$Debt.To.Expenditure * vw5.v3.out.summary.coeff[2,1]) +
   ( hve$House.Crowding * vw5.v3.out.summary.coeff[3,1]) +
   ( hve$House.Crowding.Squared * vw5.v3.out.summary.coeff[4,1]) +
   ( hve$Income.Per.Capita * vw5.v3.out.summary.coeff[5,1]) +
@@ -234,7 +235,8 @@ hve$predictedwellfare.vw5.v4  <- predict(vw5.v4, newdata=hve)
 
 
 ### Generate predicted welfare index based on variables of the model generated through v4 dataset
-hve$predictedwellfare.vw5.v4b <- ( hve$Debt.To.Expenditure * vw5.v4.out.summary.coeff[2,1]) +
+hve$predictedwellfare.vw5.v4b <- vw5.v4.out.summary.coeff[1,1] +  
+  ( hve$Debt.To.Expenditure * vw5.v4.out.summary.coeff[2,1]) +
   ( hve$House.Crowding * vw5.v4.out.summary.coeff[3,1]) +
   ( hve$House.Crowding.Squared * vw5.v4.out.summary.coeff[4,1]) +
   ( hve$Income.Per.Capita * vw5.v4.out.summary.coeff[5,1]) +

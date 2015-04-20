@@ -79,7 +79,7 @@ library(formatR)
 
 # install.packages('data.table') may need to be run if you don't have the
 # package
-library(data.table)
+#library(data.table)
 
 outlierReplace = function(dataframe, cols, rows, newValue = NA) {
   if (any(rows)) {

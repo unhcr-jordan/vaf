@@ -1,8 +1,17 @@
+##################
+### CFSME 
+###############
+
+
+## Required Library
+
 require(maptools) ## Create maps
 require(rgdal) ## Open geographic files
 require(rgeos)
 require(gplot2)
 
+
+## A function to check the correctness of the administrative unit related information
 
 IntersectPtWithPoly <- function(x, y) {
   # Extracts values from a SpatialPolygonDataFrame with
@@ -36,6 +45,7 @@ IntersectPtWithPoly <- function(x, y) {
 }
 
 
+######### Loading the first bit of the data
 
 cfsme1 <- read.csv("data/JOR_CFSME_WFP_15032015.csv", encoding= "WIN1256", stringsAsFactors=FALSE)
 
@@ -436,4 +446,20 @@ cfsme3_data <- cfsme3[, c(
                              "meta.instanceID")]
 write.csv(cfsme3_data, file = "out/JOR_CFSME_WFP_15032015_G2_18_anonymised.csv",na="")
 
+
+
+
+### Merging all dataset in one
+
+cfsme <-  merge(x=cfsme1, y=cfsme2, by="meta.instanceID")
+cfsme <-  merge(x=cfsme, y=cfsme3, by="KEY.y",  by.y="PARENT_KEY")
+write.csv(cfsme, file = "out/JOR_CFSME_WFP_all.csv",na="")
+
+cfsme.variable <- as.data.frame(names(cfsme))
+names(cfsme.variable)
+cfsme.variable$vaf <- with(cfsme.variable, ifelse(grepl("VAF", 
+                                                        #ignore.case = TRUE, fixed = FALSE, useBytes = FALSE,
+                                                        cfsme.variable[,1]),
+                                  paste0("VAF"), paste0("nonVAF") ))
+cfsme.variablevaf <- cfsme.variable[ (cfsme.variable$vaf=="VAF"),2 ]
 

@@ -461,5 +461,6 @@ cfsme.variable$vaf <- with(cfsme.variable, ifelse(grepl("VAF",
                                                         #ignore.case = TRUE, fixed = FALSE, useBytes = FALSE,
                                                         cfsme.variable[,1]),
                                   paste0("VAF"), paste0("nonVAF") ))
-cfsme.variablevaf <- cfsme.variable[ (cfsme.variable$vaf=="VAF"),2 ]
-
+cfsme.variablevaf <- cfsme.variable[ (cfsme.variable$vaf=="VAF"),1 ]
+cfsme.vaf <-cfsme[,!(names(cfsme) %in% cfsme.variablevaf)]
+write.csv(cfsme.vaf, file = "out/JOR_CFSME_WFP_all_vafonly.csv",na="")

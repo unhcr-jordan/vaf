@@ -155,6 +155,12 @@ cfsme1_data <- cfsme1[, c(
   "Gov_NAME",                                                                                       
   "Gov_code" )]
 
+cfsme1_id <- cfsme1[, c( 
+   "Assessment.G2_INFORMATION_ON_THE_CASE.Q9_5_GPS_Coordinates.Latitude",
+   "Assessment.G2_INFORMATION_ON_THE_CASE.Q9_5_GPS_Coordinates.Longitude",
+   "Assessment.G2_INFORMATION_ON_THE_CASE.Q9_5_GPS_Coordinates.Altitude",
+   "Assessment.G2_INFORMATION_ON_THE_CASE.Q9_6_Case_ID_test",
+  "meta.instanceID" )]
 
 write.csv(cfsme1_data, file = "out/JOR_CFSME_WFP_15032015_anonymised.csv",na="")
 
@@ -390,6 +396,18 @@ cfsme2_data <- cfsme2[, c(  "C_position",
                             "meta.instanceID")]
 
 
+cfsme2_id <- cfsme2[, c(  "Q2_12_1_registration_UNHCR_type_VAF",
+                             "Q2_12_1a_registration_number_barcode_VAF",
+                             "Q2_12_1b_registration_number_Manual_VAF",
+                            # "G_9_QUALITATIVE_EXPLANATORY.G9_3.Q9_3_contact_head_case",
+                            # "G_9_QUALITATIVE_EXPLANATORY.G9_3.G_Follow_up.Q9_3_1_Name",
+                            # "G_9_QUALITATIVE_EXPLANATORY.G9_3.G_Follow_up.Q9_3_2_Telephone_number",
+                            "PARENT_KEY",
+                            "KEY",
+                            "SET.OF.G2_6",
+                            "meta.instanceID")]
+
+
 names(cfsme2)
 write.csv(cfsme2_data, file = "out/JOR_CFSME_WFP_15032015_Assessment_G2_INFORMATION_ON_THE_CASE_G2_6_anonymised.csv",na="")
 
@@ -464,3 +482,17 @@ cfsme.variable$vaf <- with(cfsme.variable, ifelse(grepl("VAF",
 cfsme.variablevaf <- cfsme.variable[ (cfsme.variable$vaf=="VAF"),1 ]
 cfsme.vaf <-cfsme[,!(names(cfsme) %in% cfsme.variablevaf)]
 write.csv(cfsme.vaf, file = "out/JOR_CFSME_WFP_all_vafonly.csv",na="")
+
+## CFSME -- joining with cleaned dataset
+
+#library(xlsx)
+#cfsme1_clean <- read.xlsx("data/CFSME_Clean_21.6.2015.xlsx", sheetName="HH_Clean")
+#cfsme2_clean <- read.xlsx("data/CFSME_Clean_21.6.2015.xlsx", sheetName="Case_Clean")
+#cfsme3_clean <- read.xlsx("data/CFSME_Clean_21.6.2015.xlsx", sheetName="Casemember_clean")
+
+cfsme1_clean <- read.csv("data/HH_Clean.csv", encoding= "WIN1256", stringsAsFactors=FALSE)
+cfsme2_clean <- read.csv("data/Case_Clean.csv", encoding= "WIN1256", stringsAsFactors=FALSE)
+cfsme3_clean <- read.csv("data/Casemember_clean.csv", encoding= "WIN1256", stringsAsFactors=FALSE)
+
+cfsme2_clean_all <- merge (x=cfsme2_clean, y= cfsme2_id, by="KEY")
+write.csv(cfsme2_clean_all, file = "out/Case_Clean_withID.csv",na="")

@@ -6,6 +6,8 @@
 #### Loading the required R module
 library("FactoMineR")
 
+source("code/processing_code/1_composite_variable_homevisit.R")
+
 ##############
 #### Loading the data
 ##############

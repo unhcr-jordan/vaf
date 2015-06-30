@@ -1,6 +1,6 @@
 ##########################################################################
 #### Import data & Rename variable
-#source("code/1_composite_variable_homevisit.R")
+#source("code/processing_code/1_composite_variable_homevisit.R")
 
 
 
@@ -131,7 +131,7 @@ write.csv(vw5.v3.out.summary.coeff, file="out/vw5v3outsummary.coeff.csv")
 
 vw5.v3.coefficients <- coefficients(vw5.v3) # model coefficients
 vw5.v3.confint <- confint(vw5.v3, level=0.95) # CIs for model parameters 
-vw5.v3.fitted <- as.data.frame(fitted(vw5.v3)) # predicted values based on the model
+vw5.v3.fitted <- as.data.frame(fitted(vw5.v3)) # fitted values based on the model
 vw5.v3.residuals <- as.data.frame(residuals(vw5.v3)) # residuals
 vw5.v3.anova <- as.data.frame(anova(vw5.v3)) # anova table 
 vw5.v3.vcov <- as.data.frame(vcov(vw5.v3)) # covariance matrix for model parameters 

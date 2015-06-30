@@ -13,7 +13,7 @@ homevisit.v3 <- read.csv("data/Home_visit_version3.csv", skip=1)
 ## Labels have been manually reviewed -- elimination special characters such / or ? or - 
 ## Labels are also  trimmed when necessary so that they are less than 256 char long - 
 ## This will allow the rest of the script to run smoothly
-label.v3 <- read.csv("data/homevisit3_label.csv", na.strings="", stringsAsFactors=FALSE)
+label.v3 <- read.csv("label/homevisit3_label.csv", na.strings="", stringsAsFactors=FALSE)
 
 
 ## let's recode the variable of the dataset using short label - column 3 of my reviewed labels
@@ -34,7 +34,7 @@ homevisit.v4 <- read.csv("data/Home_visit_4.csv", skip=1)
 #write.csv(names(homevisit.v40), file="out/labelv40.csv")
 #write.csv(names(homevisit.v41), file="out/labelv41.csv")
 
-label.v4 <- read.delim("data/homevisit4_label.tsv", stringsAsFactors=FALSE)
+label.v4 <- read.delim("label/homevisit4_label.tsv", stringsAsFactors=FALSE)
 ## Remove the lines from the dictionnary that are not in v4
 label.v4.only <- label.v4[ (label.v4$v4=="yes"), ]
 
@@ -98,7 +98,7 @@ homevisit <-homevisit[(homevisit["long"] >= 34 ), ]
 summary(homevisit$dataset)
 
 ####### Recover correct Governorate & district using the coordinates
-source("code/geo.R")
+source("code/processing_code/geo.R")
 
 ### Spatial join on district 
 ## getting correct district and gov from coordinates

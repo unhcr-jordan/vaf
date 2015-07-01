@@ -4,6 +4,8 @@
 
 source("code/processing_code/packages.R")
 source("code/processing_code/0_merge_registration_homevisitsurvey.R")
+
+
 ##########################################################################
 # Creation of composite Variable
 ##########################################################################
@@ -42,6 +44,27 @@ hve$case.size.vaf.12plus <- ifelse(hve$case.size.vaf >= 12, 1, 0)
 ## Case are a registration unit , household are a "living" unit
 hve$all.case.size <- as.numeric(hve$hh.size)
 hve$all.case.size.sq <- as.numeric(hve$hh.size)^2
+
+
+########################################################
+# Expenditure per capita:
+
+# Calculation for ProGres only model , i.e. the source of case size is registration
+
+hve$exp.pc.1 <- (hve$Financial.Situation.Total.Expenditure/hve$csize_act) 
+hve$exp.pc.1[is.na(hve$exp.pc.1)] <- 0 
+hve <- hve[!(hve$exp.pc.1 == 0),] 
+hve$ln.exppc.pg <- log(hve$exp.pc.1) 
+hve <- hve[!(hve$exp.pc.1 > 1000),] 
+
+
+# Expenditure per capita:
+hve$exp.pc.2 <- (hve$Financial.Situation.Total.Expenditure/hve$Household.information.Family.Size) 
+hve$exp.pc.2[is.na(hve$exp.pc.2)] <- 0 
+hve <- hve[!(hve$exp.pc.2 == 0),] 
+hve$ln.exppc <- log(hve$exp.pc.2) 
+hve <- hve[!(hve$exp.pc.1 > 1000),] 
+
 
 #Expenditure Per Capita:
 hve$Expenditure.Per.Capita <- (hve$Financial.Situation.Total.Expenditure /

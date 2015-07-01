@@ -260,6 +260,7 @@ hve$predictedwellfare.vw5.v4.class  <- factor(hve$predictedwellfare.vw5.v4.class
 ################################################################################################
 # Welfare Models: Revised versions - May 2015
 ## Those revisions include the addition of variable from registration
+#### The new approach is also to predict the logarythmic expenditure per capita
 
 
 # Welfare Model: Home visit + PG Registration variables: 57 Variables

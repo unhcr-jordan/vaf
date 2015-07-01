@@ -24,8 +24,8 @@ library(ggplot2)
 ## Welfare model : The objective is predict the variable "Expenditure.Per.Capita"
 # econometrical estimation computed using Ordinary Least Squares (OLS) analysis. 
 ## In order to perform this, the first step is to identify variables with biggest explanatory power
-## See script:  2_Welfare-Model_automated_regression.R 
-## then some liner  regression in order to find the weight to be used for the prediction
+## See script:  2_Automated_stepwise_regression.R 
+## then some linear regression in order to find the weight to be used for the prediction
 
 
 ######### First step subset the dataframe in order to keep the column that make snese for the regression.
@@ -81,7 +81,6 @@ vw5.v3 <- lm(Expenditure.Per.Capita ~
 )
 
 ## Get summary -  for interpretation look at http://blog.yhathq.com/posts/r-lm-summary.html
-
 summary(vw5.v3)
 vw5.v3.summary.coeff <- as.data.frame(summary(vw5.v3)$coefficients[, 1:4])
 
@@ -256,5 +255,235 @@ hve$predictedwellfare.vw5.v4.class  <- factor(hve$predictedwellfare.vw5.v4.class
 
 
 #names(hve)
+
+###############################
+################################################################################################
+# Welfare Models: Revised versions - May 2015
+## Those revisions include the addition of variable from registration
+
+
+# Welfare Model: Home visit + PG Registration variables: 57 Variables
+## This includes all variables that can increase the R squarred
+
+reg.full <- lm(ln.exppc ~
+                 
+                 ### Progres - Registration variables in the model
+                 p.child.grp2 + 
+                 p.child.grp3 +
+                 p.child.grp4 +
+                 edu.highest.grp5 +
+                 edu.highest.grp4 +
+                 edu.highest.grp3 +
+                 edu.highest.grp2 +
+                 occup.grp2 +
+                 occup.grp3 +
+                 occup.grp4 +
+                 occup.grp5 +
+                 gender.male +
+                 mar_single +
+                 mar_g_married +
+                 mar_g_divorced +
+                 rel_sunni +
+                 bir_syria +
+                 dem_PA_grp1 +
+                 dem_PA_grp2 +
+                 arr_illegal + +
+                 arr.crosspoint.grp2 +
+                 arr.crosspoint.grp3 +
+                 arr.crosspoint.grp4 +
+                 arr.crosspoint.grp5 +
+                 
+                 ### Home Visit - VAF variables in the model
+                 enumerator.judgement.notvulnerable +
+                 case.size.vaf.2 +
+                 case.size.vaf.3 +
+                 case.size.vaf.4 +
+                 case.size.vaf.5 +
+                 case.size.vaf.6 +
+                 case.size.vaf.7 +
+                 case.size.vaf.8plus +                 
+                 hh.crowding +
+                 sp.co.cash +
+                 house.kitchen.d +
+                 wash.wastewater.sewage +
+                 wash.wastewater.regular.removal +
+                 food.meat.wfp.assistance +
+                 food.dairy.wfp.assistance +
+                 edu.n.attending.school +
+                 edu.public.school +
+                 vaccination.measles.NA +
+                 entry.multiple.entries +
+                 moi.ajloun +
+                 moi.aqabah +
+                 moi.balqa +
+                 moi.irbid +
+                 moi.jerash +
+                 moi.karak +
+                 moi.maan +
+                 moi.madaba +
+                 moi.mafraq + 
+                 moi.tafilah +
+                 moi.zarqa +
+                 work.documentation +
+                 all.case.size +
+                 all.case.size.sq,
+               data=hve)
+
+# for WB full
+reg.full <- lm(ln.exppc ~ 
+                 ### Progres - Registration variables in the model
+                 p.child.grp2 +
+                 p.child.grp3 +
+                 p.child.grp4 +
+                 hh.crowding +
+                 edu.highest.grp5 +
+                 edu.highest.grp4 +
+                 edu.highest.grp3 +
+                 edu.highest.grp2 +
+                 occup.grp2 +
+                 occup.grp3 +
+                 occup.grp4 +
+                 occup.grp5 +
+                 gender.male +
+                 mar_single +
+                 mar_widow +
+                 mar_g_divorced +
+                 age.PA2 +
+                 age.PA3 +
+                 arr_legal +
+                 rel_sunni +
+                 bir_syria +
+                 arr.crosspoint.grp2 +
+                 arr.crosspoint.grp3 +
+                 arr.crosspoint.grp4 +
+                 arr.crosspoint.grp5 +
+                 
+                 ### Home Visit - VAF variables in the model  
+                 enumerator.judgement.notvulnerable +               
+                 case.size.vaf.2 +
+                 case.size.vaf.3 +
+                 case.size.vaf.4 +
+                 case.size.vaf.5 +
+                 case.size.vaf.6 +
+                 case.size.vaf.7 +
+                 case.size.vaf.8.11 +
+                 case.size.vaf.12plus +
+                 house.kitchen.d +  
+                 sp.co.cash +
+                 wash.wastewater.sewage +
+                 wash.wastewater.regular.removal +
+                 food.meat.wfp.assistance +
+                 food.dairy.wfp.assistance +
+                 edu.n.attending.school +
+                 edu.public.school +
+                 vaccination.measles.NA +
+                 entry.multiple.entries +
+                 moi.ajloun +
+                 moi.aqabah +
+                 moi.balqa +
+                 moi.irbid +
+                 moi.jerash +
+                 moi.karak +
+                 moi.maan +
+                 moi.madaba +
+                 moi.mafraq +
+                 moi.tafilah +
+                 moi.zarqa +
+                 work.documentation +
+                 all.case.size +
+                 all.case.size.sq,
+               
+               data=hve)
+
+#################
+# Welfare Model (reduced): HV & PG most important variables: 
+reg.reduced <- lm(ln.exppc ~
+                    
+                    ### Progres - Registration variables in the model
+                    p.child.grp2 +
+                    p.child.grp3 +
+                    p.child.grp4 +
+                    hh.crowding +
+                    occup.grp2 +
+                    occup.grp3 +
+                    occup.grp4 +
+                    occup.grp5 +
+                    gender.male +
+                    mar_single +
+                    mar_g_married +
+                    mar_g_divorced +
+                    arr_illegal +
+                                        
+                    ### Home Visit - VAF variables in the model 
+                    enumerator.judgement.notvulnerable +
+                    case.size.vaf.2 +
+                    case.size.vaf.3 +
+                    case.size.vaf.4 +
+                    case.size.vaf.5 +
+                    case.size.vaf.6 +
+                    case.size.vaf.7 +
+                    case.size.vaf.8plus +
+                    moi.ajloun +
+                    moi.aqabah +
+                    moi.balqa +
+                    moi.irbid +
+                    moi.jerash +
+                    moi.karak +
+                    moi.maan +
+                    moi.madaba +
+                    moi.mafraq +
+                    moi.tafilah +
+                    moi.zarqa +
+                    work.documentation +
+                    all.case.size +
+                    all.case.size.sq, 
+                  data=hve)
+
+# for WB reduced
+reg.reduced <- lm(ln.exppc ~
+                    
+                    ### Progres - Registration variables in the model
+                    p.child.grp2 +
+                    p.child.grp3 +
+                    p.child.grp4 +
+                    hh.crowding +
+                    occup.grp2 +
+                    occup.grp3 +
+                    occup.grp4 +
+                    occup.grp5 +
+                    gender.male +
+                    mar_single +
+                    mar_widow +
+                    mar_g_divorced +
+                    arr_legal +
+                                        
+                    ### Home Visit - VAF variables in the model 
+                    enumerator.judgement.notvulnerable +
+                    case.size.vaf.2 +
+                    case.size.vaf.3 +
+                    case.size.vaf.4 +
+                    case.size.vaf.5 +
+                    case.size.vaf.6 +
+                    case.size.vaf.7 +
+                    case.size.vaf.8.11 +
+                    case.size.vaf.12plus +
+                    moi.ajloun +
+                    moi.aqabah +
+                    moi.balqa +
+                    moi.irbid +
+                    moi.jerash +
+                    moi.karak +
+                    moi.maan +
+                    moi.madaba +
+                    moi.mafraq +
+                    moi.tafilah +
+                    moi.zarqa +
+                    work.documentation +
+                    all.case.size +
+                    all.case.size.sq, 
+                  
+                  data=hve)
+
+
 
 

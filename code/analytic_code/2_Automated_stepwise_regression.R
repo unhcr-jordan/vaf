@@ -96,7 +96,7 @@ str(hve.model)
 names(hve.model)
 
 ##########################################################################
-#AUTOMATED REGRESSIONS:
+#AUTOMATED STEPWISE REGRESSIONS:
 ##########################################################################
 ## Allow to double check explanatory power - rsquared-  of the variables for the expenditure per capita
 ## Caution: this is a heavy calculation -> we need to split the Df to make it manageable

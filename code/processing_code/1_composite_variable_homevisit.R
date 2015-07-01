@@ -3,6 +3,7 @@
 #source("code/processing_code/0_import_collapse_merge_progres_data.R")
 
 source("code/processing_code/packages.R")
+source("code/processing_code/0_merge_registration_homevisitsurvey.R")
 ##########################################################################
 # Creation of composite Variable
 ##########################################################################
@@ -15,14 +16,32 @@ source("code/processing_code/packages.R")
 #DATA CLEANING:
 ##########################################################################
 rm(hve)
-hve <- homevisit
-
+#hve <- homevisit
+hve <- homevisit.progres
 
 ##########################################################################
 #VARIABLE GENERATION (including COMPOSITE INDICES):
 ##########################################################################
 
+hve$case.size.vaf <- as.numeric(hve$Household.information.Family.Size)
+hve$case.size.vaf.sq <- as.numeric(hve$case.size.vaf) ^ 2
 
+# Case size as dummies:
+hve$case.size.vaf.1 <- ifelse(hve$case.size.vaf == 1, 1, 0)
+hve$case.size.vaf.2 <- ifelse(hve$case.size.vaf == 2, 1, 0)
+hve$case.size.vaf.3 <- ifelse(hve$case.size.vaf == 3, 1, 0)
+hve$case.size.vaf.4 <- ifelse(hve$case.size.vaf == 4, 1, 0)
+hve$case.size.vaf.5 <- ifelse(hve$case.size.vaf == 5, 1, 0)
+hve$case.size.vaf.6 <- ifelse(hve$case.size.vaf == 6, 1, 0)
+hve$case.size.vaf.7 <- ifelse(hve$case.size.vaf == 7, 1, 0)
+hve$case.size.vaf.8plus <- ifelse(case.size.vaf >= 8, 1, 0)
+hve$case.size.vaf.8.11 <- ifelse((hve$case.size.vaf >= 8) & (hve$case.size.vaf <=11), 1, 0)
+hve$case.size.vaf.12plus <- ifelse(hve$case.size.vaf >= 12, 1, 0)
+
+# All people (cases) living in house -- This  corresponds to the definition of an household 
+## Case are a registration unit , household are a "living" unit
+hve$all.case.size <- as.numeric(hve$hh.size)
+hve$all.case.size.sq <- as.numeric(hve$hh.size)^2
 
 #Expenditure Per Capita:
 hve$Expenditure.Per.Capita <- (hve$Financial.Situation.Total.Expenditure /
@@ -74,8 +93,7 @@ hve$Family.Size.Squared <- as.numeric(hve$Household.information.Family.Size) ^ 2
 ## Renamed to Home visit Case size squarred
 
 #summary(hve$Household.information.Family.Size)
-hve$case.size.vaf <- as.numeric(hve$Household.information.Family.Size)
-hve$case.size.vaf.sq <- as.numeric(hve$case.size.vaf) ^ 2
+
 #summary(hve$case.size.vaf)
 
 #View(hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)
@@ -188,6 +206,8 @@ hve$House.Luxury.Assets <- (   hve$Type.of.Housing.Assets...Floor.mattress +
 )
 #NO: lafs<-(hve$House.Luxury.Assets/hve$Household.information.Family.Size)
 
+#############################
+### House Crowding
 
 #House Crowding (People per Room):
 hve$House.Crowding <- ( as.numeric(hve$Household.information.Family.Size) /
@@ -196,21 +216,64 @@ hve$House.Crowding.Squared<-(hve$House.Crowding)^2
 
 
 #Alternative, but not as good:
-hve$household.House.Crowding <- ( hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file.. /
+hve$household.House.Crowding <- ( hve$hh.size /
                                     hve$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
 hve$household.House.Crowding.squared <- ( hve$House.Crowding )^2
 
 #House Crowding Version 2 (Area per Person):
 hve$household.House.Crowding <- ( hve$Type.of.Housing.Total.area.excluding.the.kitchen.and.WASH.facilities..Sq..meter.. /
-                                    hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)
+                                    hve$hh.size)
 #ISSUE: Reported value of ZERO exists for both variables in data
 hve$household.House.Crowding[hve$household.House.Crowding == "Inf"] <- "0"
 hve$household.House.Crowding[hve$household.House.Crowding == "NaN"] <- "0"
 hve$household.House.Crowding <- as.numeric(hve$household.House.Crowding)
 hve$household.House.Crowding.Squared <- (hve$household.House.Crowding)^2
 
+## Other house crowding calculation -- based on progres case size
+hve$house.crowding.1 <- (hve$csize_act/
+                           hve$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
 
-#Savings Per Family Member:
+hve$house.crowding.2 <- hve$House.Crowding
+
+hve$hh.crowding <- hve$household.House.Crowding
+
+
+###################################################
+### Renaming some Variables re-used after for Welfare Model 
+
+## Those were identified afterwards  through the automated stepwise regressions 
+
+hve$wash.improved.latrine <- hve$Wastewater.What.kind.of.latrine..toilet.facility.does.your.household.use...Improved.latrine.with.cement.slab...flush.latrine
+hve$wash.wastewater.sewage <- hve$Wastewater.Wastewater.collection..disposal..Network..sewage.system
+hve$wash.wastewater.regular.removal <- hve$Environmental.Health.Solid.waste.removal..Regularly.with.sufficient.bins
+hve$food.meat.wfp.assistance <- hve$Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Meat..organ.and.flesh.meat..WFP.food.assistance
+hve$food.dairy.wfp.assistance <- hve$Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Milk.and.dairy.products.WFP.food.assistance
+
+hve$edu.n.attending.school <- hve$Children.Attending.school.Number.of.children..youth.attending.school.
+hve$edu.public.school <- hve$Currently..how.many.of.your.children.do.the.following.Public..Private...Public
+hve$vaccination.measles.NA <- hve$Vaccination.Do.you.have.a.child.under.5.years.who.was.not.immunized.for.measles...NA
+hve$entry.multiple.entries <- hve$Entry.into.Jordan.Multiple.entries..Yes
+hve$work.documentation <- hve$Documentation.Working.Family.Member.Yes
+hve$enumerator.judgement.notvulnerable <- hve$Categorization.of.Vulnerabilities.Based.on.your.experience.with.other.families..does.the.family.classify.as..Not.vulnerable
+
+
+# MOI registered governorate:
+hve$moi.amman <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Amman
+hve$moi.ajloun <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Ajloun
+hve$moi.aqabah <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Aqaba
+hve$moi.balqa <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Balqa
+hve$moi.irbid <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Irbid
+hve$moi.jerash <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Jerash
+hve$moi.karak <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Karak
+hve$moi.maan <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Maan
+hve$moi.madaba <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Madaba
+hve$moi.mafraq <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Mafraq
+hve$moi.tafilah <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Tafileh
+hve$moi.zarqa <- hve$MOI..Service.Card.Governorate.recorded.on.the.MOI.card...Zarqa
+
+
+#################################
+###Savings Per Family Member:
 hve$Saving.Per.Family.Member <- (hve$Poverty.and.Coping.Strategies.IF.Saving.how.much. /
                                    hve$Household.information.Family.Size)
 
@@ -260,8 +323,25 @@ hve$Rent.Occupancy.grp5 <- ifelse(hve$Payment.Type.of.occupancy..Squatter..illeg
 hve$Rent.Occupancy.grp5[is.na(hve$Rent.Occupancy.grp5)] <- 0
 
 
+# Rent occupancy:
+hve$occup.grp1 <- hve$Rent.Occupancy.grp1
+hve$occup.grp2 <- hve$Rent.Occupancy.grp2
+hve$occup.grp3 <- hve$Rent.Occupancy.grp3
+hve$occup.grp4 <- hve$Rent.Occupancy.grp4
+hve$occup.grp5 <- hve$Rent.Occupancy.grp5
+
 # Spices & Condiments
 hve$Spices.And.Condiments.Bought.With.Cash <- ifelse(hve$Over.the.last.7.days..how.many.days.did.you.consume.the.following.foods..0..7..What.was.the.main.source.of.the.food.in.the.past.7.days..Spices.and.condiment.bought.with.cash == "1", 1, 0)
+
+# Spices and condiments:
+hve$sp.co.cash <- hve$Spices.And.Condiments.Bought.With.Cash
+hve$sp.co.cash[is.na(hve$sp.co.cash)] <- 0
+
+
+
+# Kitchen dummy (access to), significant good R2 in lnexp
+hve$house.kitchen.d <- (hve$Type.of.Housing.Access.to.kitchen..Yes)
+hve$house.kitchen.d[is.na(hve$house.kitchen.d)] <- 0
 
 
 
@@ -272,9 +352,6 @@ hve <- hve[!rowSums(is.na(hve["Income.Per.Capita"])), ]
 hve <- hve[!rowSums(is.na(hve["Family.Size"])), ]
 hve <- hve[!rowSums(is.na(hve["Spices.And.Condiments.Bought.With.Cash"])), ]
 hve <- hve[!rowSums(is.na(hve["Rent.Occupancy"])), ]
-
-
-
 
 
 

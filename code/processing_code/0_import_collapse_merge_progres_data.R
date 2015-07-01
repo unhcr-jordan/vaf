@@ -147,17 +147,5 @@ progres.case$tafilah.pg <- ifelse(progres.case$admlevel1 == "Tafilah", 1, 0)
 progres.case$zarqa.pg <- ifelse(progres.case$admlevel1 == "Zarqa", 1, 0)
 
 
-####################################################################################
-## Noew let's merge home visit with progres data
 
-#View(homevisit3$Household.information.progres.case.File.Number)
-#View(progres.case.max$ProcessingGroupNumber)
-
-homevisit.progres <- merge(x=homevisit, y= progres.case, by.x="Household.information.UNHCR.File.Number", by.y="ProcessingGroupNumber", all.x=TRUE)
-homevisit.progres.join <- merge(x=homevisit, y= progres.case, by.x="Household.information.UNHCR.File.Number", by.y="ProcessingGroupNumber")
-
-
-#names(homevisit.progres)
-## Checking the result of the merge
-View(homevisit.progres$Num_Inds)
 

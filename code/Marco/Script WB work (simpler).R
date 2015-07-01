@@ -483,7 +483,7 @@ paris(data.frame)
 
 ################################################################################################
 ## Extra: replication of statistics in World Bank paper:
-UNHCR <- read.csv("~/Desktop/Targeting Model/4.5 World Bank/One_Big_list_vaf_with_progres_ANSI_UNIX.txt", na.strings = "")
+UNHCR <- read.csv("data/One_Big_list_vaf_with_progres_ANSI_UNIX.txt", na.strings = "")
 attach(UNHCR)
 
 UNHCR <- UNHCR [!(UNHCR$Household.information.Family.Size_5 == 0),] # lose 4 obs.

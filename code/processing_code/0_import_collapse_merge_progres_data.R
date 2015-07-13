@@ -36,6 +36,26 @@ progres.case$dem_PA_grp2 <- ifelse((progres.case$dem_age > 17) &
 progres.case$dem_PA_grp3 <- ifelse(progres.case$dem_age > 59, 1, 0)
 
 
+progres.case$age.PA1 <- ifelse(progres.case$dem_age < 35, 1, 0)
+
+progres.case$age.PA2 <- ifelse((progres.case$dem_age > 34) &
+                                 (progres.case$dem_age < 55), 1, 0)
+
+progres.case$age.PA3 <- ifelse(progres.case$dem_age > 54, 1, 0)
+
+# Percentage of children:
+progres.case$p.child.grp1 <- ifelse(progres.case$percentage_0_14 == 0, 1, 0)
+
+progres.case$p.child.grp2 <- ifelse((progres.case$percentage_0_14 > 0) &
+                                      (progres.case$percentage_0_14 < 50), 1, 0)
+
+progres.case$p.child.grp3 <- ifelse((progres.case$percentage_0_14 >= 50) &
+                                      (progres.case$percentage_0_14 < 75), 1, 0)
+
+progres.case$p.child.grp4 <- ifelse(progres.case$percentage_0_14 >= 75, 1, 0)
+
+
+
 ##########
 # Marital status:
 progres.case$mar_widow <- ifelse(progres.case$dem_marriage == "WD Widowed", 1, 0) # niente
@@ -46,16 +66,17 @@ progres.case$mar_engaged <- ifelse(progres.case$dem_marriage == "EG Engaged", 1,
 progres.case$mar_g_divorced <- ifelse((progres.case$dem_marriage == "DV Divorced" | progres.case$dem_marriage == "SR Separated"), 1, 0) # significativa ma poco R2
 progres.case$mar_g_married <- ifelse((progres.case$dem_marriage == "MA Married" | progres.case$dem_marriage == "CL Common Law Married" | progres.case$dem_marriage == "EG Engaged"), 1, 0) # significativa e OK R2 ma meno rispetto a married-only
 
+
 ##########
 # Ethnicity, religion, birth:
-progres.case$ethn_arab <- ifelse(dem_ethn == "Arab", 1, 0)
-progres.case$rel_sunni <- ifelse(dem_religion == "SUN Sunni", 1, 0)
-progres.case$bir_syria <- ifelse(dem_birth_country == "SYR", 1, 0)
+progres.case$ethn_arab <- ifelse(progres.case$dem_ethn == "Arab", 1, 0)
+progres.case$rel_sunni <- ifelse(progres.case$dem_religion == "SUN Sunni", 1, 0)
+progres.case$bir_syria <- ifelse(progres.case$dem_birth_country == "SYR", 1, 0)
 
 ##########
 # Gender PA:
-progres.case$gender.male <- ifelse(dem_sex == "Male", 1, 0)
-progres.case$gender.female <- ifelse(dem_sex == "Female", 1, 0)
+progres.case$gender.male <- ifelse(progres.case$dem_sex == "Male", 1, 0)
+progres.case$gender.female <- ifelse(progres.case$dem_sex == "Female", 1, 0)
 
 ##########
 # Educational attainment:
@@ -115,12 +136,13 @@ progres.case$arr.crosspoint.grp5 <- ifelse((progres.case$arr_crosspoint == "E - 
 
 ##########
 # Case Size:
-progres.case$case.size.pg <- (progres.case$csize_act)
-progres.case$case.size.pg.sq <- (progres.case$csize_act)^2
+
+progres.case$csize_act <- progres.case$Num_Inds
+progres.case$case.size.pg <- progres.case$Num_Inds
+progres.case$case.size.pg.sq <- as.numeric(progres.case$Num_Inds)^2
 
 ##########
 # Case size as dummies:
-progres.case$case.size.pg <- (progres.case$csize_act)
 progres.case$case.size.pg.1 <- ifelse(progres.case$case.size.pg == 1, 1, 0)
 progres.case$case.size.pg.2 <- ifelse(progres.case$case.size.pg == 2, 1, 0)
 progres.case$case.size.pg.3 <- ifelse(progres.case$case.size.pg == 3, 1, 0)

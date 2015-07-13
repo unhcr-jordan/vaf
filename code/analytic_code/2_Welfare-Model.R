@@ -441,7 +441,7 @@ reg.reduced <- lm(ln.exppc ~
                   data=hve)
 
 # for WB reduced
-reg.reduced <- lm(ln.exppc ~
+reg.reduced2 <- lm(ln.exppc ~
                     
                     ### Progres - Registration variables in the model
                     p.child.grp2 +

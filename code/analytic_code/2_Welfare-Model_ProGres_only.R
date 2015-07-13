@@ -46,9 +46,9 @@ reg.pg <- lm(ln.exppc.pg ~
                p.child.grp2 +
                p.child.grp3 +
                p.child.grp4 +
-               mar.grp1 +
-               mar.grp2 +
-               mar.grp3 +
+               mar_single+
+               mar_g_married+
+               mar_g_divorced +
                rel_sunni +
                bir_syria +
                edu.highest.grp2 +
@@ -87,10 +87,87 @@ dev.off()
 ### Generate predicted welfare index based on variables of the model generated through v4 dataset
 # http://connectmv.com/tutorials/r-tutorial/extracting-information-from-a-linear-model-in-r/
 
-progres.case$predictedwellfare  <- predict(reg.pg, newdata=progres.case) 
+progres.case$ln.predictedwellfare  <- predict(reg.pg, newdata=progres.case) 
+
+progres.case$predictedwellfare <- exp(progres.case$ln.predictedwellfare)
+
+summary(progres.case$predictedwellfare)
 
 ## Class Severe <28 ; High <68; Moderate < 100;  Low > 100;
 progres.case$predictedwellfare.class <- as.factor(findCols(classIntervals(progres.case$predictedwellfare, n = 4, style = "fixed", fixedBreaks = c(-105, 28, 68 , 100, 1100))))
 progres.case$predictedwellfare.class <- revalue(progres.case$predictedwellfare.class, c(`1` = "Severe", `2` = "High", `3` = "Moderate", `4` = "Low"))
 progres.case$predictedwellfare.class  <- factor(progres.case$predictedwellfare.class, levels = c("Severe", "High", "Moderate", "Low"))
 #View(hve$predictedwellfare.vw5.v3.class)
+
+
+
+########## Let's visualise the results
+
+## Expenditure per capita  - predicted
+rm(boxplot.expenditurecapita)
+boxplot.expenditurecapita <- ggplot(progres.case, aes(x=Num_Inds, y=predictedwellfare)) +
+  geom_boxplot() +
+  guides(fill=FALSE) +
+  ggtitle("Boxplot: Comparison of prediucted expenditure per capita for proGres data")
+ggsave("out/progres-only/boxplot-expenditurecapita-progres.png", boxplot.expenditurecapita, width=8, height=6,units="in", dpi=300)
+rm(boxplot.expenditurecapita)
+
+
+
+# Histogram overlaid with Expenditure.Per.Capita
+rm(histo.expenditurecapita)
+histo.expenditurecapita <- ggplot(progres.case, aes(x=progres.case$predictedwellfare)) + 
+  geom_histogram(aes(y =..density..), 
+                 breaks=c(1, 28, 68 , 100, 1000), 
+                 #xlim(0, 250),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(predictedwellfare, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(admlevel1 ~ .) +
+  labs(x="Expenditure per capita", y="Count of cases")  +
+  ggtitle("Histogramm for predicted Expenditure per capita for all progres cases between Governorates")
+ggsave("out/progres-only/histogram-expenditurecapita-proGres.png", histo.expenditurecapita, width=8, height=6,units="in", dpi=300)
+rm(histo.expenditurecapita)
+
+
+## Doing the same but facetting on adm1_name  -- Governorates
+rm(boxplot.expenditurecapita.gov)
+boxplot.expenditurecapita.gov <- ggplot(progres.case, aes(x=admlevel1, y=predictedwellfare, fill=admlevel1)) +
+  geom_boxplot() +
+  guides(fill=FALSE) +
+  ggtitle("Boxplot: Comparison of expenditure per capita")
+ggsave("out/progres-only/boxplot-expenditurecapitagov-progres.png", boxplot.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
+rm(boxplot.expenditurecapita.gov)
+
+# Histogram overlaid with Expenditure.Per.Capita
+rm(histo.expenditurecapita.gov)
+histo.expenditurecapita.gov <- ggplot(hve, aes(x=progres.case$predictedwellfare)) + 
+  geom_histogram(aes(y =..density..), 
+                 breaks=c(1, 28, 68 , 100, 1000), 
+                 #xlim(0, 250),
+                 #binwidth=.5, 
+                 colour="dark blue", fill="light blue", alpha = .2) +
+  geom_density(col =2, alpha=.2, fill="#FF6666") + 
+  geom_vline(aes(xintercept=mean(predictedwellfare, na.rm=T)), color="red", linetype="dashed", size=1) + 
+  facet_grid(adm1_name ~ .) +
+  labs(x="Expenditure per capita", y="Count of cases")  +
+  ggtitle("Histogramm for Expenditure per capita per Governorate")
+ggsave("out/progres-only/histogram-expenditurecapitagov-progres.png", histo.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
+rm(histo.expenditurecapita.gov)
+
+#### Bar graph to show repartition by class for expenditure per capita
+rm(bar.Expenditure.Per.Capita.class)
+bar.Expenditure.Per.Capita.class <- ggplot(data=progres.case, 
+                                           aes(x=predictedwellfare.class , y=Num_Inds)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  # coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
+  ylab("# of Ind") +
+  scale_y_continuous(labels=format_si())+
+  ggtitle("Expenditure.Per.Capita.class")
+ggsave("out/progres-only/barExpenditurePerCapitaclass-progres.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
+rm(bar.Expenditure.Per.Capita.class)
+

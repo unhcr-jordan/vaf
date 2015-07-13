@@ -2,8 +2,8 @@
 #### Import data & Rename variable
 #source("code/processing_code/0_import_collapse_merge_progres_data.R")
 
-source("code/processing_code/packages.R")
-source("code/processing_code/0_merge_registration_homevisitsurvey.R")
+#source("code/processing_code/packages.R")
+#source("code/processing_code/0_merge_registration_homevisitsurvey.R")
 
 
 ##########################################################################
@@ -19,7 +19,7 @@ source("code/processing_code/0_merge_registration_homevisitsurvey.R")
 ##########################################################################
 rm(hve)
 #hve <- homevisit
-hve <- homevisit.progres
+hve <- homevisit.progres.join
 
 ##########################################################################
 #VARIABLE GENERATION (including COMPOSITE INDICES):
@@ -36,12 +36,17 @@ hve$case.size.vaf.4 <- ifelse(hve$case.size.vaf == 4, 1, 0)
 hve$case.size.vaf.5 <- ifelse(hve$case.size.vaf == 5, 1, 0)
 hve$case.size.vaf.6 <- ifelse(hve$case.size.vaf == 6, 1, 0)
 hve$case.size.vaf.7 <- ifelse(hve$case.size.vaf == 7, 1, 0)
-hve$case.size.vaf.8plus <- ifelse(case.size.vaf >= 8, 1, 0)
+hve$case.size.vaf.8plus <- ifelse(hve$case.size.vaf >= 8, 1, 0)
 hve$case.size.vaf.8.11 <- ifelse((hve$case.size.vaf >= 8) & (hve$case.size.vaf <=11), 1, 0)
 hve$case.size.vaf.12plus <- ifelse(hve$case.size.vaf >= 12, 1, 0)
 
 # All people (cases) living in house -- This  corresponds to the definition of an household 
 ## Case are a registration unit , household are a "living" unit
+
+#View(hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)
+hve$Family.Size.All.File.Numbers.Squared <- (hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)^2
+
+hve$hh.size <- hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..
 hve$all.case.size <- as.numeric(hve$hh.size)
 hve$all.case.size.sq <- as.numeric(hve$hh.size)^2
 
@@ -119,8 +124,6 @@ hve$Family.Size.Squared <- as.numeric(hve$Household.information.Family.Size) ^ 2
 
 #summary(hve$case.size.vaf)
 
-#View(hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)
-hve$Family.Size.All.File.Numbers.Squared <- (hve$Type.of.Housing.Number.of.family.members.in.the.house..both.in.the.same.file.number.or.in.another.file..)^2
 
 
 

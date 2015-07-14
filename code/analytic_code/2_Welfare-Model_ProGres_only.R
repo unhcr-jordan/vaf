@@ -101,6 +101,9 @@ progres.case$predictedwellfare.class  <- factor(progres.case$predictedwellfare.c
 
 
 
+write.csv(progres.case, file = "out/progres-only/progrescase-with-prediction.csv",na="")
+
+
 ########## Let's visualise the results
 
 ## Expenditure per capita  - predicted
@@ -171,3 +174,37 @@ bar.Expenditure.Per.Capita.class <- ggplot(data=progres.case,
 ggsave("out/progres-only/barExpenditurePerCapitaclass-progres.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
 rm(bar.Expenditure.Per.Capita.class)
 
+
+### Let's check how many case were visited through home visit
+progres.case.hve <- merge(x=progres.case, y=homevisit, by.x="ProcessingGroupNumber", by.y="Household.information.UNHCR.File.Number", all.x=TRUE)
+# names(progres.case)
+# names(homevisit)
+# View(progres.case$ProcessingGroupNumber)
+# View(homevisit$Household.information.UNHCR.File.Number)
+
+## Addd a tag for visited or not
+##progres.case.hve$visited <- with(progres.case.hve, ifelse(is.na(progres.case.hve$dataset)), paste0("Not visited"), paste0("Visited")))
+
+progres.case.hve$visited <- "Not visited"
+progres.case.hve$visited <- with(progres.case.hve,
+                    ifelse( ( progres.case.hve$dataset == "homevisit3"),
+                            paste0("homevisit3"), progres.case.hve$visited ))
+progres.case.hve$visited <- with(progres.case.hve,
+                                 ifelse( ( progres.case.hve$dataset == "homevisit4"),
+                                         paste0("homevisit4"), progres.case.hve$visited ))
+
+#### Bar graph to show repartition by class for expenditure per capita
+rm(bar.Expenditure.Per.Capita.class.hve)
+bar.Expenditure.Per.Capita.class.hve <- ggplot(data=progres.case.hve, 
+                                           aes(x=predictedwellfare.class , y=Num_Inds)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  facet_grid(visited ~ .) +
+  # coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
+  ylab("# of Ind") +
+  scale_y_continuous(labels=format_si())+
+  ggtitle("Expenditure.Per.Capita.class")
+ggsave("out/progres-only/barExpenditurePerCapitaclass-progres-visited.png", bar.Expenditure.Per.Capita.class.hve, width=8, height=6,units="in", dpi=300)
+rm(bar.Expenditure.Per.Capita.class.hve)

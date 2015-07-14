@@ -19,6 +19,14 @@ trim <- function( x ) {
 homevisit$clean.UNHCR.File.Number <- trim(homevisit$Household.information.UNHCR.File.Number)
 
 homevisit.progres <- merge(x=homevisit, y= progres.case, by.x="Household.information.UNHCR.File.Number", by.y="ProcessingGroupNumber", all.x=TRUE)
+
+## Checking homevisits where no join was possible --
+names(homevisit.progres)
+View(homevisit.progres$Num_Inds)
+homevisit.progres.nojoin <- homevisit.progres[ which(is.na(homevisit.progres$Num_Inds)), c("Household.information.UNHCR.File.Number",
+                                                                                           "Volunteer..Name.",  "Volunteer..Phone.Number.") ] 
+write.csv(homevisit.progres.nojoin, file = "out/progres-only/homevisit-progres-nojoin.csv",na="")
+
 homevisit.progres.join <- merge(x=homevisit, y= progres.case, by.x="Household.information.UNHCR.File.Number", by.y="ProcessingGroupNumber")
 #homevisit.progres.join2 <- merge(x=homevisit, y= progres.case, by.x="clean.UNHCR.File.Number", by.y="ProcessingGroupNumber")
 

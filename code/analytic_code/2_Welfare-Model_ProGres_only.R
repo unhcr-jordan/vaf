@@ -205,6 +205,6 @@ bar.Expenditure.Per.Capita.class.hve <- ggplot(data=progres.case.hve,
   xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
   ylab("# of Ind") +
   scale_y_continuous(labels=format_si())+
-  ggtitle("Expenditure.Per.Capita.class")
+  ggtitle("# Ind for all registered refugees per predicted wellfare class - Comparison visited or not")
 ggsave("out/progres-only/barExpenditurePerCapitaclass-progres-visited.png", bar.Expenditure.Per.Capita.class.hve, width=8, height=6,units="in", dpi=300)
 rm(bar.Expenditure.Per.Capita.class.hve)

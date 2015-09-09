@@ -3,6 +3,12 @@ require(maptools) ## Create maps
 require(rgdal) ## Open geographic files
 require(rgeos)
 
+library(rgeos)
+library(sp) 
+library(maptools)
+library(rgdal)
+library(sp)
+
 IntersectPtWithPoly <- function(x, y) {
   # Extracts values from a SpatialPolygonDataFrame with
   # SpatialPointsDataFrame, and appends table (similar to
@@ -14,7 +20,7 @@ IntersectPtWithPoly <- function(x, y) {
   # SpatialPointsDataFrame with appended table of polygon attributes
   
   # Set up overlay with new column of join IDs in x
-  z <- overlay(y, x)
+  z <- over(y, x)
   
   # Bind captured data to points dataframe
   x2 <- cbind(x, z)

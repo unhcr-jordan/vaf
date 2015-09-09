@@ -30,7 +30,7 @@ names(homevisit.v3) <- label.v3[, 3]
 #
 homevisit.v4 <- read.csv("data/Home_visit_4.csv", skip=1)
 
-#homevisit.v41 <- read.csv("data/Home_visit_4_1.csv", skip=1)
+#homevisit.v41 <- read.csv("data/Home_visit_4_3.csv", skip=1)
 #write.csv(names(homevisit.v40), file="out/labelv40.csv")
 #write.csv(names(homevisit.v41), file="out/labelv41.csv")
 
@@ -88,6 +88,9 @@ homevisit$long <- as.numeric(substr( homevisit$geo, 15,27))
 homevisit <-homevisit[!rowSums(is.na(homevisit["lat"])), ]
 homevisit <-homevisit[!rowSums(is.na(homevisit["long"])), ]
 
+
+summary(homevisit$dataset)
+
 ### Eliminate record with obviously wrong coordinates
 homevisit <-homevisit[(homevisit["lat"] <=  34), ]
 homevisit <-homevisit[(homevisit["lat"] >= 29), ]
@@ -103,8 +106,8 @@ source("code/processing_code/geo.R")
 ### Spatial join on district 
 ## getting correct district and gov from coordinates
 #districtgeo <- readOGR("geo/district.geojson", "OGRGeoJSON")
-districtgeo <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
-
+districtgeo1 <- readOGR("geo/subdistrict.geojson", "OGRGeoJSON")
+districtgeo <- spTransform(districtgeo1, CRS("+proj=longlat +ellps=WGS84"))
 #plot(districtgeo)
 #names(districtgeo)
 
@@ -114,7 +117,8 @@ datasp <-homevisit[ , c("long", "lat")]
 #3ploting for a quick check
 ##plot(datasp)
 coords <- cbind(datasp$long, datasp$lat)
-datasp0 <- SpatialPointsDataFrame(coords, data= datasp, proj4string=CRS("+proj=longlat"))
+#datasp0 <- SpatialPointsDataFrame(coords, data= datasp, proj4string=CRS("+proj=longlat"))
+datasp0 <- SpatialPoints(coords, proj4string=CRS("+proj=longlat"))
 
 #plot(datasp0)
 
@@ -149,7 +153,7 @@ summary(homevisit$dataset)
 # Replace Null with 0 in data.frame:
 
 homevisit[is.na(homevisit)]<-0
-
+summary(homevisit$dataset)
 
 ############## incorrect family size, incorrect number of rooms)
 #Eliminate Rows with Family Size is NA, 0 or >= 20 
@@ -159,18 +163,23 @@ homevisit <- homevisit [!(homevisit$Household.information.Family.Size==0),]
 homevisit <- homevisit [!(homevisit$Household.information.Family.Size >= 20),]
 
 homevisit <- homevisit[!rowSums(is.na(homevisit["Household.information.Family.Size"])), ]
-
+summary(homevisit$dataset)
 #View(homevisit)
 
-
+homevisit.back <- homevisit 
+homevisit <-homevisit.back
 #Eliminate Rows with Number of Rooms is = 0 and Number of Rooms is >= 10 (Total of 24 records present with 0, 14, 16 and 60 rooms):
 
-#View(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
+str(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
 
-homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities. <- as.numeric(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
-homevisit <- homevisit [!(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.== 0),]
-homevisit <- homevisit [!(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities. >= 10),]
+homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.1 <- as.numeric(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.)
+summary(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.1)
 
+hist(homevisit[homevisit$dataset=="homevisit4",]$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.1)
+
+homevisit <- homevisit[!(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.1== 0),]
+homevisit <- homevisit[!(homevisit$Type.of.Housing.Number.of.rooms.excluding.the.kitchen.and.WASH.facilities.1 >= 10),]
+summary(homevisit$dataset)
 
 #View(homevisit$Volunteer..Case.Status...Available) ##  not present in Df... 
 homevisit <- homevisit [!(homevisit$Volunteer..Case.Status...Reachable == 0),]

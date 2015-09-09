@@ -301,6 +301,9 @@ boxplot.expenditurecapita.gov <- ggplot(progres.case, aes(x=admlevel1, y=predict
 ggsave("out/progres-only/boxplot-expenditurecapitagov-progres.png", boxplot.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
 rm(boxplot.expenditurecapita.gov)
 
+
+########################################################################################
+######################################################################################
 # Histogram overlaid with Expenditure.Per.Capita
 rm(histo.expenditurecapita.gov)
 histo.expenditurecapita.gov <- ggplot(hve, aes(x=progres.case$predictedwellfare)) + 
@@ -317,10 +320,13 @@ histo.expenditurecapita.gov <- ggplot(hve, aes(x=progres.case$predictedwellfare)
 ggsave("out/progres-only/histogram-expenditurecapitagov-progres.png", histo.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
 rm(histo.expenditurecapita.gov)
 
+
+########################################################################################
+######################################################################################
 #### Bar graph to show repartition by class for expenditure per capita
 rm(bar.Expenditure.Per.Capita.class)
 bar.Expenditure.Per.Capita.class <- ggplot(data=progres.case, 
-                                           aes(x=predictedwellfare.class , y=Num_Inds)) + 
+                                              aes(x=predictedwellfare.class , y=Num_Inds)) + 
   geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
   # geom_text(aes(label=variable), vjust=0) +
   guides(fill=FALSE) + 
@@ -328,9 +334,62 @@ bar.Expenditure.Per.Capita.class <- ggplot(data=progres.case,
   xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
   ylab("# of Ind") +
   scale_y_continuous(labels=format_si())+
-  ggtitle("Expenditure.Per.Capita.class")
+  ggtitle("Expenditure.Per.Capita.class.h3 for all Refugees in progres")
 ggsave("out/progres-only/barExpenditurePerCapitaclass-progres.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
-rm(bar.Expenditure.Per.Capita.class)
+
+bar.Expenditure.Per.Capita.class <- bar.Expenditure.Per.Capita.class +
+  geom_text(aes(x=progres.case$predictedwellfare.class,
+                y=progres.case$Num_Inds + 0.3 * sign(Num_Inds),
+                label=format(progres.case$Num_Inds, digits=2),
+                hjust=ifelse(progres.case$Num_Inds > 0,0,1)), 
+            size=3,
+            color=rgb(100,100,100, maxColorValue=255))  
+ggsave("out/progres-only/barExpenditurePerCapitaclass-progres.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
+#rm(bar.Expenditure.Per.Capita.class)
+
+#rm(bar.Expenditure.Per.Capita.class.h3)
+bar.Expenditure.Per.Capita.class.h3 <- ggplot(data=progres.case, 
+                                           aes(x=predictedwellfare.class.h3 , y=Num_Inds)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  # coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
+  ylab("# of Ind") +
+  scale_y_continuous(labels=format_si())+
+  ggtitle("Expenditure.Per.Capita.class.h3 for all Refugees in progres")
+ggsave("out/progres-only/barExpenditurePerCapitaclass-progresh3.png", bar.Expenditure.Per.Capita.class.h3, width=8, height=6,units="in", dpi=300)
+#rm(bar.Expenditure.Per.Capita.class.h3)
+
+#rm(bar.Expenditure.Per.Capita.class.h4)
+bar.Expenditure.Per.Capita.class.h4 <- ggplot(data=progres.case, 
+                                           aes(x=predictedwellfare.class.h4 , y=Num_Inds)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  # coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
+  ylab("# of Ind") +
+  scale_y_continuous(labels=format_si())+
+  ggtitle("Expenditure.Per.Capita.class.h4 for all Refugees in progres")
+ggsave("out/progres-only/barExpenditurePerCapitaclass-progresh4.png", bar.Expenditure.Per.Capita.class.h4, width=8, height=6,units="in", dpi=300)
+#rm(bar.Expenditure.Per.Capita.class)
+
+#rm(bar.Expenditure.Per.Capita.class.aug)
+bar.Expenditure.Per.Capita.class.aug <- ggplot(data=progres.case, 
+                                           aes(x=predictedwellfare.class.aug , y=Num_Inds)) + 
+  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
+  # geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + 
+  # coord_flip()+
+  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
+  ylab("# of Ind") +
+  scale_y_continuous(labels=format_si())+
+  ggtitle("Expenditure.Per.Capita.class.aug for all Refugees in progres")
+ggsave("out/progres-only/barExpenditurePerCapitaclass-progresaug.png", bar.Expenditure.Per.Capita.class.aug, width=8, height=6,units="in", dpi=300)
+#rm(bar.Expenditure.Per.Capita.class)
+
+
 
 
 ### Let's check how many case were visited through home visit

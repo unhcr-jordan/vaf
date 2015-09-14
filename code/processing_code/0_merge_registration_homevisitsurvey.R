@@ -2,8 +2,8 @@
 ## Noew let's merge home visit with progres data
 
 
-source("code/processing_code/0_import_collapse_merge_progres_data.R")
-source("code/processing_code/0_import_clean_rename_merg_homevisit.R")
+#source("code/processing_code/0_import_collapse_merge_progres_data.R")
+#source("code/processing_code/0_import_clean_rename_merg_homevisit.R")
 
 source("code/processing_code/packages.R")
 
@@ -22,7 +22,7 @@ homevisit.progres <- merge(x=homevisit, y= progres.case, by.x="Household.informa
 
 ## Checking homevisits where no join was possible --
 names(homevisit.progres)
-View(homevisit.progres$Num_Inds)
+#View(homevisit.progres$Num_Inds)
 homevisit.progres.nojoin <- homevisit.progres[ which(is.na(homevisit.progres$Num_Inds)), c("Household.information.UNHCR.File.Number",
                                                                                            "Volunteer..Name.",  "Volunteer..Phone.Number.","dataset") ] 
 summary(homevisit.progres.nojoin$dataset)
@@ -35,4 +35,4 @@ homevisit.progres.join <- merge(x=homevisit, y= progres.case, by.x="Household.in
 
 #names(homevisit.progres)
 ## Checking the result of the merge
-View(homevisit.progres$Num_Inds)
+#View(homevisit.progres$Num_Inds)

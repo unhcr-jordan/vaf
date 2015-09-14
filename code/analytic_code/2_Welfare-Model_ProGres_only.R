@@ -20,6 +20,7 @@ library(classInt)
 library(plyr)
 library(ggplot2)
 
+hve <- read.csv("out/hve.csv")
 
 ##################################################################
 ## Welfare model : The objective is predict the variable "Expenditure.Per.Capita"
@@ -234,7 +235,7 @@ dev.off()
 progres.case$ln.predictedwellfare  <- predict(reg.pg, newdata=progres.case) 
 
 progres.case$predictedwellfare <- exp(progres.case$ln.predictedwellfare)
-summary(progres.case$predictedwellfare)
+#summary(progres.case$predictedwellfare)
 
 progres.case$predictedwellfare.h3 <- exp(predict(reg.pg.h3, newdata=progres.case) )
 progres.case$predictedwellfare.h4 <- exp(predict(reg.pg.h4, newdata=progres.case) )
@@ -259,141 +260,25 @@ progres.case$predictedwellfare.class.aug <- revalue(progres.case$predictedwellfa
 progres.case$predictedwellfare.class.aug  <- factor(progres.case$predictedwellfare.class.aug, levels = c("Severe", "High", "Moderate", "Low"))
 
 
-write.csv(progres.case, file = "out/progres-only/progrescase-with-prediction.csv",na="")
+### Let merge with cas beneficiaries list
+cash <- read.csv("data/cash14092015.csv", header=TRUE)
 
+## Check duplicate in that list...
+uniqueFilenumber <- as.data.frame(unique(cash$File.Number))
+names(uniqueFilenumber) <- "File.Number"
+## Keeping only unique one
+cash2 <- cash[!duplicated(cash$File.Number), ]
 
-########## Let's visualise the results
-
-## Expenditure per capita  - predicted
-rm(boxplot.expenditurecapita)
-boxplot.expenditurecapita <- ggplot(progres.case, aes(x=Num_Inds, y=predictedwellfare)) +
-  geom_boxplot() +
-  guides(fill=FALSE) +
-  ggtitle("Boxplot: Comparison of prediucted expenditure per capita for proGres data")
-ggsave("out/progres-only/boxplot-expenditurecapita-progres.png", boxplot.expenditurecapita, width=8, height=6,units="in", dpi=300)
-rm(boxplot.expenditurecapita)
-
-
-
-# Histogram overlaid with Expenditure.Per.Capita
-rm(histo.expenditurecapita)
-histo.expenditurecapita <- ggplot(progres.case, aes(x=progres.case$predictedwellfare)) + 
-  geom_histogram(aes(y =..density..), 
-                 breaks=c(1, 28, 68 , 100, 1000), 
-                 #xlim(0, 250),
-                 #binwidth=.5, 
-                 colour="dark blue", fill="light blue", alpha = .2) +
-  geom_density(col =2, alpha=.2, fill="#FF6666") + 
-  geom_vline(aes(xintercept=mean(predictedwellfare, na.rm=T)), color="red", linetype="dashed", size=1) + 
-  facet_grid(admlevel1 ~ .) +
-  labs(x="Expenditure per capita", y="Count of cases")  +
-  ggtitle("Histogramm for predicted Expenditure per capita for all progres cases between Governorates")
-ggsave("out/progres-only/histogram-expenditurecapita-proGres.png", histo.expenditurecapita, width=8, height=6,units="in", dpi=300)
-rm(histo.expenditurecapita)
-
-
-## Doing the same but facetting on adm1_name  -- Governorates
-rm(boxplot.expenditurecapita.gov)
-boxplot.expenditurecapita.gov <- ggplot(progres.case, aes(x=admlevel1, y=predictedwellfare, fill=admlevel1)) +
-  geom_boxplot() +
-  guides(fill=FALSE) +
-  ggtitle("Boxplot: Comparison of expenditure per capita")
-ggsave("out/progres-only/boxplot-expenditurecapitagov-progres.png", boxplot.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
-rm(boxplot.expenditurecapita.gov)
-
-
-########################################################################################
-######################################################################################
-# Histogram overlaid with Expenditure.Per.Capita
-rm(histo.expenditurecapita.gov)
-histo.expenditurecapita.gov <- ggplot(hve, aes(x=progres.case$predictedwellfare)) + 
-  geom_histogram(aes(y =..density..), 
-                 breaks=c(1, 28, 68 , 100, 1000), 
-                 #xlim(0, 250),
-                 #binwidth=.5, 
-                 colour="dark blue", fill="light blue", alpha = .2) +
-  geom_density(col =2, alpha=.2, fill="#FF6666") + 
-  geom_vline(aes(xintercept=mean(predictedwellfare, na.rm=T)), color="red", linetype="dashed", size=1) + 
-  facet_grid(adm1_name ~ .) +
-  labs(x="Expenditure per capita", y="Count of cases")  +
-  ggtitle("Histogramm for Expenditure per capita per Governorate")
-ggsave("out/progres-only/histogram-expenditurecapitagov-progres.png", histo.expenditurecapita.gov, width=8, height=6,units="in", dpi=300)
-rm(histo.expenditurecapita.gov)
-
-
-########################################################################################
-######################################################################################
-#### Bar graph to show repartition by class for expenditure per capita
-rm(bar.Expenditure.Per.Capita.class)
-bar.Expenditure.Per.Capita.class <- ggplot(data=progres.case, 
-                                              aes(x=predictedwellfare.class , y=Num_Inds)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  # coord_flip()+
-  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
-  ylab("# of Ind") +
-  scale_y_continuous(labels=format_si())+
-  ggtitle("Expenditure.Per.Capita.class.h3 for all Refugees in progres")
-ggsave("out/progres-only/barExpenditurePerCapitaclass-progres.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
-
-bar.Expenditure.Per.Capita.class <- bar.Expenditure.Per.Capita.class +
-  geom_text(aes(x=progres.case$predictedwellfare.class,
-                y=progres.case$Num_Inds + 0.3 * sign(Num_Inds),
-                label=format(progres.case$Num_Inds, digits=2),
-                hjust=ifelse(progres.case$Num_Inds > 0,0,1)), 
-            size=3,
-            color=rgb(100,100,100, maxColorValue=255))  
-ggsave("out/progres-only/barExpenditurePerCapitaclass-progres.png", bar.Expenditure.Per.Capita.class, width=8, height=6,units="in", dpi=300)
-#rm(bar.Expenditure.Per.Capita.class)
-
-#rm(bar.Expenditure.Per.Capita.class.h3)
-bar.Expenditure.Per.Capita.class.h3 <- ggplot(data=progres.case, 
-                                           aes(x=predictedwellfare.class.h3 , y=Num_Inds)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  # coord_flip()+
-  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
-  ylab("# of Ind") +
-  scale_y_continuous(labels=format_si())+
-  ggtitle("Expenditure.Per.Capita.class.h3 for all Refugees in progres")
-ggsave("out/progres-only/barExpenditurePerCapitaclass-progresh3.png", bar.Expenditure.Per.Capita.class.h3, width=8, height=6,units="in", dpi=300)
-#rm(bar.Expenditure.Per.Capita.class.h3)
-
-#rm(bar.Expenditure.Per.Capita.class.h4)
-bar.Expenditure.Per.Capita.class.h4 <- ggplot(data=progres.case, 
-                                           aes(x=predictedwellfare.class.h4 , y=Num_Inds)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  # coord_flip()+
-  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
-  ylab("# of Ind") +
-  scale_y_continuous(labels=format_si())+
-  ggtitle("Expenditure.Per.Capita.class.h4 for all Refugees in progres")
-ggsave("out/progres-only/barExpenditurePerCapitaclass-progresh4.png", bar.Expenditure.Per.Capita.class.h4, width=8, height=6,units="in", dpi=300)
-#rm(bar.Expenditure.Per.Capita.class)
-
-#rm(bar.Expenditure.Per.Capita.class.aug)
-bar.Expenditure.Per.Capita.class.aug <- ggplot(data=progres.case, 
-                                           aes(x=predictedwellfare.class.aug , y=Num_Inds)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  # coord_flip()+
-  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
-  ylab("# of Ind") +
-  scale_y_continuous(labels=format_si())+
-  ggtitle("Expenditure.Per.Capita.class.aug for all Refugees in progres")
-ggsave("out/progres-only/barExpenditurePerCapitaclass-progresaug.png", bar.Expenditure.Per.Capita.class.aug, width=8, height=6,units="in", dpi=300)
-#rm(bar.Expenditure.Per.Capita.class)
-
-
+progres.case <- merge(x=progres.case, y=cash2, by.x="ProcessingGroupNumber", by.y="File.Number", all.x=TRUE)
+#names(progres.case)
 
 
 ### Let's check how many case were visited through home visit
-progres.case.hve <- merge(x=progres.case, y=homevisit, by.x="ProcessingGroupNumber", by.y="Household.information.UNHCR.File.Number", all.x=TRUE)
+## Keeping only home visit unique to case
+names(hve)
+hve.unique <- hve[!duplicated(hve$Household.information.UNHCR.File.Number), ]
+
+progres.case <- merge(x=progres.case, y=hve.unique, by.x="ProcessingGroupNumber", by.y="Household.information.UNHCR.File.Number", all.x=TRUE)
 # names(progres.case)
 # names(homevisit)
 # View(progres.case$ProcessingGroupNumber)
@@ -402,26 +287,19 @@ progres.case.hve <- merge(x=progres.case, y=homevisit, by.x="ProcessingGroupNumb
 ## Addd a tag for visited or not
 ##progres.case.hve$visited <- with(progres.case.hve, ifelse(is.na(progres.case.hve$dataset)), paste0("Not visited"), paste0("Visited")))
 
-progres.case.hve$visited <- "Not visited"
-progres.case.hve$visited <- with(progres.case.hve,
-                    ifelse( ( progres.case.hve$dataset == "homevisit3"),
-                            paste0("homevisit3"), progres.case.hve$visited ))
-progres.case.hve$visited <- with(progres.case.hve,
-                                 ifelse( ( progres.case.hve$dataset == "homevisit4"),
-                                         paste0("homevisit4"), progres.case.hve$visited ))
+progres.case$visited <- "Not visited"
+progres.case$visited <- with(progres.case,
+                                 ifelse( ( progres.case$dataset == "homevisit3"),
+                                         paste0("homevisit3"), progres.case$visited ))
+progres.case$visited <- with(progres.case,
+                                 ifelse( ( progres.case$dataset == "homevisit4"),
+                                         paste0("homevisit4"), progres.case$visited ))
 
-#### Bar graph to show repartition by class for expenditure per capita
-rm(bar.Expenditure.Per.Capita.class.hve)
-bar.Expenditure.Per.Capita.class.hve <- ggplot(data=progres.case.hve, 
-                                           aes(x=predictedwellfare.class , y=Num_Inds)) + 
-  geom_bar( stat="identity",fill="#2a87c8",colour="#2a87c8") +
-  # geom_text(aes(label=variable), vjust=0) +
-  guides(fill=FALSE) + 
-  facet_grid(visited ~ .) +
-  # coord_flip()+
-  xlab("Class: Severe<28JOD; High:28-68JOD; Moderate:68-100JOD; Low>100JOD") + 
-  ylab("# of Ind") +
-  scale_y_continuous(labels=format_si())+
-  ggtitle("# Ind for all registered refugees per predicted wellfare class - Comparison visited or not")
-ggsave("out/progres-only/barExpenditurePerCapitaclass-progres-visited.png", bar.Expenditure.Per.Capita.class.hve, width=8, height=6,units="in", dpi=300)
-rm(bar.Expenditure.Per.Capita.class.hve)
+
+
+write.csv(progres.case, file = "out/progres-only/progrescase-with-prediction.csv",na="")
+
+
+########## Let's visualise the results
+
+## See  code/presentation_code/4_plot_welfare-on-progres-only.R
